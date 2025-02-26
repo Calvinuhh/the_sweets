@@ -10,3 +10,5 @@ export default interface User {
 }
 
 export type CreateUser = Pick<User, "name" | "email" | "password">;
+
+export type LoginData = Pick<User, "email" | "password">;
