@@ -27,3 +27,20 @@ export const validateNewUser = (
     res.status(400).json(err.message);
   }
 };
+
+export const validateNewDesseert = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { name, price, picture } = req.body;
+
+    
+
+    next();
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json(err.message);
+  }
+};

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import { auth, createUser, login } from "../services/userServices";
-import { verify } from "jsonwebtoken";
 
 process.loadEnvFile();
-const { JWT_SECRET } = process.env as { JWT_SECRET: string };
 
 export const createUserController = async (req: Request, res: Response) => {
   try {

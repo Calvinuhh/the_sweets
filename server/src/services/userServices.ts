@@ -47,8 +47,6 @@ export const auth = async (token: string) => {
 
   if (!user) throw Error("Token invalido");
 
-  if (user.confirmed) throw Error("Usuario ya confirmado");
-
   user.confirmed = true;
   user.token = "";
 
