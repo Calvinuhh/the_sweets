@@ -26,8 +26,6 @@ const LoginAdmin = () => {
       return;
     }
 
-    setError("");
-
     try {
       setIsLoading(true);
 
@@ -47,8 +45,6 @@ const LoginAdmin = () => {
       });
       navigate("/admin");
     } catch (error: AxiosError | any) {
-      setError(error.response?.data);
-
       Swal.fire({
         icon: "error",
         title: "Error",

@@ -39,11 +39,13 @@ export const validateNewDesseert = (
   try {
     const { name, price } = req.body;
 
+    console.log(req.body);
+
     if (!name) throw Error("El nombre es necesario");
     if (!price) throw Error("El precio es necesario");
 
     validateLettersAndNumbers(name);
-    if (isNaN(price)) throw Error("El precio debe ser un número");
+    if (isNaN(Number(price))) throw Error("El precio debe ser un número");
 
     next();
   } catch (error) {

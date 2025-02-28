@@ -16,7 +16,7 @@ const AdminResources = () => {
     if (
       !token ||
       !tokenTimestamp ||
-      currentTime - parseInt(tokenTimestamp) > 900000
+      currentTime - parseInt(tokenTimestamp) > 1800000
     ) {
       localStorage.removeItem("token");
       localStorage.removeItem("tokenTimestamp");

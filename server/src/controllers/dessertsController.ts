@@ -4,6 +4,7 @@ import {
   getDesserts,
   updateDessert,
   deleteDessert,
+  getDessertById,
 } from "../services/dessertServices";
 
 export const createDessertController = async (req: Request, res: Response) => {
@@ -32,26 +33,39 @@ export const getDessertsController = async (req: Request, res: Response) => {
   }
 };
 
-//REVISAR
-export const updateDessertsController = async (req: Request, res: Response) => {
+export const getDessertByIdController = async (req: Request, res: Response) => {
   try {
-    const picturePath = req.file
-      ? `/images/${req.file.filename}`
-      : req.body.picture;
-    const dessertData = { ...req.body, picture: picturePath };
-    const dessert = await updateDessert(req.params.id, dessertData);
-    res.status(200).json(dessert);
+    const { _id } = req.params;
+
+    res.status(200).json(await getDessertById(_id));
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);
   }
 };
 
-//REVISAR
+export const updateDessertsController = async (req: Request, res: Response) => {
+  try {
+    const { name, price } = req.body;
+    const { _id } = req.params;
+
+    await updateDessert(_id, {
+      name,
+      price,
+      picture: req.file ? `/images/${req.file.filename}` : req.body.picture,
+    });
+    res.status(200).json("Postre Actualizado!");
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json(err.message);
+  }
+};
+
 export const deleteDessertsController = async (req: Request, res: Response) => {
   try {
-    await deleteDessert(req.params.id);
-    res.status(204).send();
+    const { _id } = req.params;
+    await deleteDessert(_id);
+    res.status(204).json("Postre Eliminado");
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

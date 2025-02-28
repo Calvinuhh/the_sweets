@@ -8,3 +8,4 @@ export default interface Dessert {
 }
 
 export type CreateDessert = Pick<Dessert, "name" | "price" | "picture">;
+export type UpdateDessert = Partial<CreateDessert>;
