@@ -11,13 +11,13 @@ export const createDessertController = async (req: Request, res: Response) => {
   try {
     const { name, price } = req.body;
 
-    await createDessert({
+    const newDessert = await createDessert({
       name,
       price,
       picture: req.file ? `/images/${req.file.filename}` : null,
     });
 
-    res.status(201).json("Postre creado con éxito");
+    res.status(201).json(newDessert);
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

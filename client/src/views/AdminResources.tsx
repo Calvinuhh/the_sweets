@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Nav from "../components/Nav";
+import AdminNav from "../components/AdminNav";
 import Desserts from "../components/desserts/Desserts";
 import Orders from "../components/orders/Orders";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +28,7 @@ const AdminResources = () => {
 
   return (
     <>
-      <Nav activeTab={activeTab} setActiveTab={setActiveTab} />
+      <AdminNav activeTab={activeTab} setActiveTab={setActiveTab} />
       {activeTab === "postres" ? <Desserts /> : <Orders />}
     </>
   );

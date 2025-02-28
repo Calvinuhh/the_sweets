@@ -5,7 +5,7 @@ interface NavProps {
   setActiveTab: (tab: string) => void;
 }
 
-const Nav: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
+const AdminNav: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
   return (
     <div className="bg-rose-300 h-[200px] flex items-center justify-around relative">
       <img src="/logo.png" alt="logo" className="w-[190px] h-[180px]" />
@@ -52,4 +52,4 @@ const Nav: React.FC<NavProps> = ({ activeTab, setActiveTab }) => {
   );
 };
 
-export default Nav;
+export default AdminNav;

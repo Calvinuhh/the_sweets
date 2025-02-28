@@ -7,7 +7,6 @@ import {
   updateDessertsController,
 } from "../../controllers/dessertsController";
 import upload from "../../multer/multer";
-import { validateNewDesseert } from "../../middlewares/inputValidations";
 import { adminAuthorization } from "../../middlewares/adminAuthorization";
 import { validateObjectId } from "../../middlewares/paramsValidations";
 import { validatePatchDessert } from "../../middlewares/patchValidations";
@@ -16,12 +15,7 @@ const dessertsRouter: Router = Router();
 
 dessertsRouter.use(adminAuthorization);
 
-dessertsRouter.post(
-  "/",
-  // validateNewDesseert,
-  upload.single("picture"),
-  createDessertController
-);
+dessertsRouter.post("/", upload.single("picture"), createDessertController);
 dessertsRouter.get("/", getDessertsController);
 dessertsRouter.get("/:_id", validateObjectId, getDessertByIdController);
 dessertsRouter.patch(

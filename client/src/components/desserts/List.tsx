@@ -30,7 +30,7 @@ const List = ({
         title: "Detalles del Postre",
         html: `
           <p><strong>Nombre:</strong> ${data.name}</p>
-          <p><strong>Precio:</strong> $${data.price.toFixed(2)}</p>
+          <p><strong>Precio:</strong> $${data.price}</p>
           <br/>
           ${
             data.picture
@@ -88,7 +88,7 @@ const List = ({
   return (
     <tr className="border-b border-gray-300 text-center">
       <td className="p-3">{name}</td>
-      <td className="p-3">${price.toFixed(2)}</td>
+      <td className="p-3">${price}</td>
       <td className="p-3">{picture ? "Sí" : "No"}</td>
       <td className="p-3 flex justify-center gap-3">
         <button

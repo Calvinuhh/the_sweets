@@ -30,26 +30,3 @@ export const validateNewUser = (
     res.status(400).json(err.message);
   }
 };
-
-export const validateNewDesseert = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { name, price } = req.body;
-
-    console.log(req.body);
-
-    if (!name) throw Error("El nombre es necesario");
-    if (!price) throw Error("El precio es necesario");
-
-    validateLettersAndNumbers(name);
-    if (isNaN(Number(price))) throw Error("El precio debe ser un número");
-
-    next();
-  } catch (error) {
-    const err = error as Error;
-    res.status(400).json(err.message);
-  }
-};

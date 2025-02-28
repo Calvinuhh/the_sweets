@@ -8,9 +8,9 @@ export const createDessert = async (data: CreateDessert) => {
 
   const dessertName = await Dessert.findOne({ name });
 
-  if (dessertName) throw Error("Ya existe un archivo llamado asi");
+  if (dessertName) throw Error("Ya existe un postre llamado asi");
 
-  await Dessert.create({ name, picture, price });
+  return await Dessert.create({ name, picture, price });
 };
 
 export const getDesserts = async () => {
