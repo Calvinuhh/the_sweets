@@ -10,8 +10,6 @@ export const createDessertController = async (req: Request, res: Response) => {
   try {
     const { name, price } = req.body;
 
-    console.log(req.body.picture);
-
     await createDessert({
       name,
       price,

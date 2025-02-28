@@ -1,9 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+
 import {
   validateEmail,
+  validateLettersAndNumbers,
   validateName,
   validatePassword,
 } from "../utils/inputValidations";
+import { log } from "console";
 
 export const validateNewUser = (
   req: Request,
@@ -34,9 +37,13 @@ export const validateNewDesseert = (
   next: NextFunction
 ) => {
   try {
-    const { name, price, picture } = req.body;
+    const { name, price } = req.body;
 
-    
+    if (!name) throw Error("El nombre es necesario");
+    if (!price) throw Error("El precio es necesario");
+
+    validateLettersAndNumbers(name);
+    if (isNaN(price)) throw Error("El precio debe ser un número");
 
     next();
   } catch (error) {

@@ -7,13 +7,16 @@ import {
 } from "../../controllers/dessertsController";
 import upload from "../../multer/multer";
 import { validateNewDesseert } from "../../middlewares/inputValidations";
+import { adminAuthorization } from "../../middlewares/adminAuthorization";
 
 const dessertsRouter: Router = Router();
 
+dessertsRouter.use(adminAuthorization);
+
 dessertsRouter.post(
   "/",
-  validateNewDesseert,
   upload.single("picture"),
+  validateNewDesseert,
   createDessertController
 );
 dessertsRouter.get("/", getDessertsController);

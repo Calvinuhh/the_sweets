@@ -19,3 +19,10 @@ export const validatePassword = (password: string) => {
       "La contraseña debe tener minimo una letra minuscula, una mayuscula, un numero, un caracter especial y minimo 8 caracteres"
     );
 };
+
+export const validateLettersAndNumbers = (name: string) => {
+  if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(name))
+    throw Error(
+      "El nombre solo puede tener letras y numeros, no caracteres especiales"
+    );
+};
