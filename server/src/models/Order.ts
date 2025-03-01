@@ -19,25 +19,9 @@ const dessertSchema = new Schema(
   }
 );
 
-const orderSchema = new Schema(
-  {
-    desserts: [dessertSchema],
-    user: {
-      type: Types.ObjectId,
-      ref: "user",
-      required: true,
-    },
-    total: {
-      type: Number,
-      required: true,
-    },
-    date: {
-      type: Date,
-      default: Date.now,
-      required: true,
-    },
-  },
-  { versionKey: false }
-);
+//TODO
+// const orderSchema = new Schema({
 
-export default model("order", orderSchema);
+// }, { versionKey: false });
+
+// export default model("order", orderSchema);

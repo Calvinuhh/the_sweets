@@ -2,11 +2,9 @@ import { NextFunction, Request, Response } from "express";
 
 import {
   validateEmail,
-  validateLettersAndNumbers,
   validateName,
   validatePassword,
 } from "../utils/inputValidations";
-import { log } from "console";
 
 export const validateNewUser = (
   req: Request,

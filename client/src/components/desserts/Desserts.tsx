@@ -89,7 +89,7 @@ const Desserts = () => {
 
   return (
     <div className="p-4 font-lato">
-      <div className="flex justify-center items-center gap-2 mb-10 mt-10">
+      <div className="flex justify-center items-center gap-10 mb-10 mt-10">
         <h2 className="text-xl font-bold">Postres</h2>
         <button
           onClick={handleAddDessert}
