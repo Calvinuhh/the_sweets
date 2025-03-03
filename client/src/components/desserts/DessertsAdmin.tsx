@@ -4,7 +4,7 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import List from "./List";
 
-const Desserts = () => {
+const DessertsAdmin = () => {
   const [desserts, setDesserts] = useState<
     { _id: string; name: string; price: number; picture: string | null }[]
   >([]);
@@ -119,4 +119,4 @@ const Desserts = () => {
   );
 };
 
-export default Desserts;
+export default DessertsAdmin;

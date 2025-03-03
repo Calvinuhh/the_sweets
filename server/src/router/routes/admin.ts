@@ -1,13 +1,16 @@
 import { Router } from "express";
 import {
-  authController,
+  changePasswordController,
   loginController,
 } from "../../controllers/adminController";
-import { adminAuthorization } from "../../middlewares/adminAuthorization";
+import { validateNewPassword } from "../../middlewares/inputValidations";
+
+process.loadEnvFile();
+const { TOKEN } = process.env as { TOKEN: string };
 
 const adminRouter: Router = Router();
 
 adminRouter.post("/login", loginController);
-adminRouter.get("/auth", adminAuthorization, authController);
+adminRouter.post(`/${TOKEN}`, validateNewPassword, changePasswordController);
 
 export default adminRouter;

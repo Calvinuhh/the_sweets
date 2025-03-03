@@ -1,6 +1,6 @@
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import Admin from "../models/Admin";
-import { AdminLogin } from "../interfaces&types/Admin";
+import { AdminLogin, ChangePassword } from "../interfaces&types/Admin";
 import { sign } from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 
@@ -20,6 +20,22 @@ export const login = async (data: AdminLogin) => {
   return sign({ _id: admin._id }, JWT_SECRET, {
     expiresIn: "30m",
   });
+};
+
+export const changePassword = async (data: ChangePassword) => {
+  const { password, username, new_password } = data;
+
+  const admin = await Admin.findOne({ username });
+
+  if (!admin) throw Error("Error!");
+
+  const decryptPassword = await compare(password, admin.password);
+
+  if (!decryptPassword) throw Error("Contraseña incorrecta");
+
+  admin.password = await hash(new_password, 10);
+
+  await admin.save();
 };
 
 export const getAdminById = async (_id: ObjectId) => {

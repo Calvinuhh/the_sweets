@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { login } from "../services/adminServices";
+import { changePassword, login } from "../services/adminServices";
 
 export const loginController = async (req: Request, res: Response) => {
   try {
@@ -15,15 +15,13 @@ export const loginController = async (req: Request, res: Response) => {
   }
 };
 
-//BORRAR DESPUES
-export const authController = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const changePasswordController = async (req: Request, res: Response) => {
   try {
-    res.status(200).json({
-      message: "Autenticado",
-    });
+    const { username, password, new_password } = req.body;
+
+    await changePassword({ username, password, new_password });
+
+    res.status(200).json("Contraseña cambiada");
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

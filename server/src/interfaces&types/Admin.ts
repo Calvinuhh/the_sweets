@@ -7,3 +7,7 @@ export default interface Admin {
 }
 
 export type AdminLogin = Pick<Admin, "username" | "password">;
+
+export interface ChangePassword extends Omit<Admin, "_id"> {
+  new_password: string;
+}

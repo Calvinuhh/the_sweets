@@ -20,9 +20,11 @@ const adminSchema = new Schema<AdminModel>(
 );
 
 adminSchema.pre("save", async function (next) {
-  const count = await model<AdminModel>("admin").countDocuments();
-  if (count > 0) {
-    throw new Error("Solo puede existir un administrador");
+  if (this.isNew) {
+    const count = await model<AdminModel>("admin").countDocuments();
+    if (count > 0) {
+      throw new Error("Solo puede existir un administrador");
+    }
   }
   next();
 });

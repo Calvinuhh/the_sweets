@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AdminNav from "../components/AdminNav";
-import Desserts from "../components/desserts/Desserts";
-import Orders from "../components/orders/Orders";
+import DessertsAdmin from "../components/desserts/DessertsAdmin";
+import OrdersAdmin from "../components/orders/OrdersAdmin";
 import { useNavigate } from "react-router-dom";
 
 const AdminResources = () => {
@@ -29,7 +29,7 @@ const AdminResources = () => {
   return (
     <>
       <AdminNav activeTab={activeTab} setActiveTab={setActiveTab} />
-      {activeTab === "postres" ? <Desserts /> : <Orders />}
+      {activeTab === "postres" ? <DessertsAdmin /> : <OrdersAdmin />}
     </>
   );
 };
