@@ -8,10 +8,12 @@ const dessertSchema = new Schema<Dessert>(
       trim: true,
       required: true,
       unique: true,
+      match: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/,
     },
     price: {
       type: Number,
       required: true,
+      min: 1000,
     },
     picture: {
       type: String,

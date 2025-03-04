@@ -37,7 +37,7 @@ export const getDessertById = async (_id: string) => {
 };
 
 export const updateDessert = async (_id: string, data: UpdateDessert) => {
-  const { name, picture, price } = data;
+  const { name, picture, price, type } = data;
 
   const dessert = await Dessert.findById(_id);
   if (!dessert) throw Error("Postre no encontrado");
@@ -59,6 +59,7 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
   const updateObject: UpdateDessert = {};
   if (name) updateObject.name = name;
   if (price) updateObject.price = price;
+  if (type) updateObject.type = type;
   if (picture) updateObject.picture = picture;
 
   return await Dessert.findByIdAndUpdate(_id, updateObject, { new: true });

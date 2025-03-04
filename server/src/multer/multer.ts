@@ -7,14 +7,35 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const { name, price, type } = req.body;
+
+    console.log(req.body);
+
     if (!name) {
-      return cb(new Error("El campo 'name' es necesario"), "");
+      return cb(new Error("El campo 'name' es requerido"), "");
     }
+
     if (!price) {
-      return cb(new Error("El campo 'price' es necesario"), "");
+      return cb(new Error("El campo 'price' es requerido"), "");
     }
-    if (!type) {
-      return cb(new Error("El campo 'type' es necesario"), "");
+
+    if (price <= 999) {
+      return cb(
+        new Error("El precio debe ser un número mayor o igual a 1000."),
+        ""
+      );
+    }
+    if (
+      type != "postre_frio" &&
+      type != "galleta" &&
+      type != "rollo" &&
+      type != "torta"
+    ) {
+      return cb(
+        new Error(
+          "Los tipos de postre permitidos son: 'postre_frio', 'galleta', 'rollo' y 'torta'"
+        ),
+        ""
+      );
     }
 
     const ext = path.extname(file.originalname);

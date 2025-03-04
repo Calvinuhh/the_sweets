@@ -107,6 +107,9 @@ const DessertsAdmin = () => {
           document.getElementById("swal-picture") as HTMLInputElement
         )?.files?.[0];
 
+        // Expresión regular para validar el nombre
+        const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
+
         if (!name || !price || !type) {
           Swal.showValidationMessage(
             "Todos los campos son obligatorios, excepto la imagen."
@@ -114,10 +117,17 @@ const DessertsAdmin = () => {
           return false;
         }
 
-        const priceNumber = Number(price);
-        if (isNaN(priceNumber) || priceNumber <= 1000) {
+        if (!nameRegex.test(name)) {
           Swal.showValidationMessage(
-            "El precio debe ser un número mayor a 1000."
+            "El nombre solo puede contener letras, números y espacios."
+          );
+          return false;
+        }
+
+        const priceNumber = Number(price);
+        if (isNaN(priceNumber) || priceNumber <= 999) {
+          Swal.showValidationMessage(
+            "El precio debe ser un número mayor o igual a 1000."
           );
           return false;
         }

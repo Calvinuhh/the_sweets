@@ -31,6 +31,7 @@ const List = ({
         html: `
           <p><strong>Nombre:</strong> ${data.name}</p>
           <p><strong>Precio:</strong> $${data.price}</p>
+          <p><strong>Tipo:</strong> ${data.type}</p>
           <br/>
           ${
             data.picture

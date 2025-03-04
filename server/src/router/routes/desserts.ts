@@ -9,22 +9,21 @@ import {
 import upload from "../../multer/multer";
 import { adminAuthorization } from "../../middlewares/adminAuthorization";
 import { validateObjectId } from "../../middlewares/paramsValidations";
-import { validatePatchDessert } from "../../middlewares/patchValidations";
 
 const dessertsRouter: Router = Router();
 
 // dessertsRouter.use(adminAuthorization);
 
+dessertsRouter.param("_id", validateObjectId);
+
 dessertsRouter.post("/", upload.single("picture"), createDessertController);
 dessertsRouter.get("/", getDessertsController);
-dessertsRouter.get("/:_id", validateObjectId, getDessertByIdController);
+dessertsRouter.get("/:_id", getDessertByIdController);
 dessertsRouter.patch(
   "/:_id",
-  validateObjectId,
-  validatePatchDessert,
   upload.single("picture"),
   updateDessertsController
 );
-dessertsRouter.delete("/:_id", validateObjectId, deleteDessertsController);
+dessertsRouter.delete("/:_id", deleteDessertsController);
 
 export default dessertsRouter;

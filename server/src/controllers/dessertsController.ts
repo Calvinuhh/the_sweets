@@ -6,10 +6,23 @@ import {
   deleteDessert,
   getDessertById,
 } from "../services/dessertServices";
+import {
+  validateName,
+  validatePrice,
+  validateDessertTypes,
+} from "../utils/inputValidations";
 
 export const createDessertController = async (req: Request, res: Response) => {
   try {
     const { name, price, type } = req.body;
+
+    if (!name) throw Error("El nombre es necesario");
+    if (!price) throw Error("El precio es necesario");
+    if (!type) throw Error("El tipo de postre es necesario");
+
+    validateName(name);
+    validatePrice(price);
+    validateDessertTypes(type);
 
     const newDessert = await createDessert({
       name,
@@ -49,13 +62,22 @@ export const getDessertByIdController = async (req: Request, res: Response) => {
 
 export const updateDessertsController = async (req: Request, res: Response) => {
   try {
-    const { name, price } = req.body;
+    const { name, price, type } = req.body;
     const { _id } = req.params;
+
+    if (!name) throw Error("El nombre es necesario");
+    if (!price) throw Error("El precio es necesario");
+    if (!type) throw Error("El tipo de postre es necesario");
+
+    validateName(name);
+    validatePrice(price);
+    validateDessertTypes(type);
 
     await updateDessert(_id, {
       name,
       price,
       picture: req.file ? `/images/${req.file.filename}` : req.body.picture,
+      type,
     });
     res.status(200).json("Postre Actualizado!");
   } catch (error) {
