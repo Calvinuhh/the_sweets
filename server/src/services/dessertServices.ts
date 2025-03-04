@@ -4,19 +4,27 @@ import path from "path";
 import fs from "fs";
 
 export const createDessert = async (data: CreateDessert) => {
-  const { name, picture, price } = data;
+  const { name, picture, price, type } = data;
 
   const dessertName = await Dessert.findOne({ name });
 
   if (dessertName) throw Error("Ya existe un postre llamado asi");
 
-  return await Dessert.create({ name, picture, price });
+  return await Dessert.create({ name, picture, price, type });
 };
 
-export const getDesserts = async () => {
-  const desserts = await Dessert.find();
+export const getDesserts = async (type?: string) => {
+  if (!type) {
+    const desserts = await Dessert.find();
+    if (desserts.length === 0) throw Error("No hay postres disponibles");
+    return desserts;
+  }
 
-  if (desserts.length === 0) throw Error("No hay postres en la base de datos");
+  const desserts = await Dessert.find({ type });
+
+  if (desserts.length === 0)
+    throw Error(`No se encontraron postres de tipo ${type}`);
+
   return desserts;
 };
 

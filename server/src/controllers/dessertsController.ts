@@ -9,12 +9,13 @@ import {
 
 export const createDessertController = async (req: Request, res: Response) => {
   try {
-    const { name, price } = req.body;
+    const { name, price, type } = req.body;
 
     const newDessert = await createDessert({
       name,
       price,
       picture: req.file ? `/images/${req.file.filename}` : null,
+      type,
     });
 
     res.status(201).json(newDessert);
@@ -26,7 +27,9 @@ export const createDessertController = async (req: Request, res: Response) => {
 
 export const getDessertsController = async (req: Request, res: Response) => {
   try {
-    res.status(200).json(await getDesserts());
+    const { type } = req.query as { type: string };
+
+    res.status(200).json(await getDesserts(type));
   } catch (error) {
     const err = error as Error;
     res.status(404).json(err.message);

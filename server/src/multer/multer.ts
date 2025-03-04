@@ -6,9 +6,15 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "../images"));
   },
   filename: (req, file, cb) => {
-    const { name } = req.body;
+    const { name, price, type } = req.body;
     if (!name) {
-      return cb(new Error("El campo 'name' es obligatorio"), "");
+      return cb(new Error("El campo 'name' es necesario"), "");
+    }
+    if (!price) {
+      return cb(new Error("El campo 'price' es necesario"), "");
+    }
+    if (!type) {
+      return cb(new Error("El campo 'type' es necesario"), "");
     }
 
     const ext = path.extname(file.originalname);

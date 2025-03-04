@@ -16,6 +16,11 @@ const dessertSchema = new Schema<Dessert>(
     picture: {
       type: String,
     },
+    type: {
+      type: String,
+      required: true,
+      enum: ["torta", "postre_frio", "rollo", "galleta"],
+    },
   },
   { versionKey: false }
 );

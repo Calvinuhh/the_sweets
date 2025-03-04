@@ -13,7 +13,7 @@ import { validatePatchDessert } from "../../middlewares/patchValidations";
 
 const dessertsRouter: Router = Router();
 
-dessertsRouter.use(adminAuthorization);
+// dessertsRouter.use(adminAuthorization);
 
 dessertsRouter.post("/", upload.single("picture"), createDessertController);
 dessertsRouter.get("/", getDessertsController);
