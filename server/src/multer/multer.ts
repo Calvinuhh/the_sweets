@@ -1,5 +1,6 @@
 import multer from "multer";
 import path from "path";
+import Dessert from "../models/Dessert";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -8,35 +9,44 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const { name, price, type } = req.body;
 
-    console.log(req.body);
+    if (!name) return cb(new Error("El campo 'name' es requerido"), "");
 
-    if (!name) {
-      return cb(new Error("El campo 'name' es requerido"), "");
-    }
+    if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(name))
+      return cb(
+        new Error("El campo 'name' solo puede tener letras y numeros"),
+        ""
+      );
 
-    if (!price) {
-      return cb(new Error("El campo 'price' es requerido"), "");
-    }
+    (async (name: string) => {
+      const dessertName = await Dessert.findOne({ name });
 
-    if (price <= 999) {
+      if (dessertName)
+        return cb(new Error("Ya existe un postre con ese nombre"), "");
+    })(name);
+
+    if (!price) return cb(new Error("El campo 'price' es requerido"), "");
+
+    if (isNaN(price))
+      return cb(new Error("El campo 'price' debe ser un numero"), "");
+
+    if (price <= 999)
       return cb(
         new Error("El precio debe ser un número mayor o igual a 1000."),
         ""
       );
-    }
+
     if (
       type != "postre_frio" &&
       type != "galleta" &&
       type != "rollo" &&
       type != "torta"
-    ) {
+    )
       return cb(
         new Error(
           "Los tipos de postre permitidos son: 'postre_frio', 'galleta', 'rollo' y 'torta'"
         ),
         ""
       );
-    }
 
     const ext = path.extname(file.originalname);
     const sanitizedFileName = name.replace(/\s+/g, "_").toLowerCase();

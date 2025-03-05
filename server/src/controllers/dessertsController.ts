@@ -7,18 +7,18 @@ import {
   getDessertById,
 } from "../services/dessertServices";
 import {
+  validateDessertTypes,
   validateName,
   validatePrice,
-  validateDessertTypes,
 } from "../utils/inputValidations";
 
 export const createDessertController = async (req: Request, res: Response) => {
   try {
     const { name, price, type } = req.body;
 
-    if (!name) throw Error("El nombre es necesario");
-    if (!price) throw Error("El precio es necesario");
-    if (!type) throw Error("El tipo de postre es necesario");
+    if (!name) throw Error("El campo 'name' es requerido");
+    if (!price) throw Error("El campo 'price' es requerido");
+    if (!type) throw Error("El campo 'type' es requerido");
 
     validateName(name);
     validatePrice(price);
@@ -65,21 +65,21 @@ export const updateDessertsController = async (req: Request, res: Response) => {
     const { name, price, type } = req.body;
     const { _id } = req.params;
 
-    if (!name) throw Error("El nombre es necesario");
-    if (!price) throw Error("El precio es necesario");
-    if (!type) throw Error("El tipo de postre es necesario");
+    for (const key in req.body) {
+      if (!req.body[key]) throw Error(`El campo '${key}' es requerido`);
+    }
 
-    validateName(name);
-    validatePrice(price);
-    validateDessertTypes(type);
+    if (name) validateName(name);
+    if (price) validatePrice(price);
+    if (type) validateDessertTypes(type);
 
-    await updateDessert(_id, {
+    const updatedDessert = await updateDessert(_id, {
       name,
       price,
       picture: req.file ? `/images/${req.file.filename}` : req.body.picture,
       type,
     });
-    res.status(200).json("Postre Actualizado!");
+    res.status(200).json(updatedDessert);
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

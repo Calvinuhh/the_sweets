@@ -7,6 +7,7 @@ import {
   updateDessertsController,
 } from "../../controllers/dessertsController";
 import upload from "../../multer/multer";
+import updoadPatch from "../../multer/multerPatch";
 import { adminAuthorization } from "../../middlewares/adminAuthorization";
 import { validateObjectId } from "../../middlewares/paramsValidations";
 
@@ -21,7 +22,7 @@ dessertsRouter.get("/", getDessertsController);
 dessertsRouter.get("/:_id", getDessertByIdController);
 dessertsRouter.patch(
   "/:_id",
-  upload.single("picture"),
+  updoadPatch.single("picture"),
   updateDessertsController
 );
 dessertsRouter.delete("/:_id", deleteDessertsController);

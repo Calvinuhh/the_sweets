@@ -20,15 +20,15 @@ app.use(json());
 app.use(router);
 app.use(
   (
-    err: any,
+    err: Error | multer.MulterError,
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
     if (err instanceof multer.MulterError) {
-      res.status(400).json({ error: err.message });
+      res.status(400).json(err.message);
     } else if (err) {
-      res.status(500).json({ error: err.message });
+      res.status(400).json(err.message);
     } else {
       next();
     }

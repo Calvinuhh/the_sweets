@@ -11,4 +11,4 @@ export default interface Dessert {
 }
 
 export type CreateDessert = Omit<Dessert, "_id">;
-export type UpdateDessert = Partial<CreateDessert>;
+export type UpdateDessert = Partial<Dessert>;

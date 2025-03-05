@@ -8,7 +8,7 @@ export const createDessert = async (data: CreateDessert) => {
 
   const dessertName = await Dessert.findOne({ name });
 
-  if (dessertName) throw Error("Ya existe un postre llamado asi");
+  if (dessertName) throw Error("Ya existe un postre con ese nombre");
 
   return await Dessert.create({ name, picture, price, type });
 };
@@ -41,6 +41,13 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
 
   const dessert = await Dessert.findById(_id);
   if (!dessert) throw Error("Postre no encontrado");
+
+  if (name) {
+    const existingDessert = await Dessert.findOne({ name });
+    if (existingDessert && existingDessert._id.toString() !== _id) {
+      throw new Error("Ya existe un postre con ese nombre");
+    }
+  }
 
   if (picture && dessert.picture) {
     const oldFilePath = path.join(

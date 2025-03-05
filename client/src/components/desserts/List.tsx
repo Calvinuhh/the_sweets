@@ -2,19 +2,22 @@ import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-const List = ({
-  _id,
-  name,
-  price,
-  picture,
-  onDelete,
-}: {
+type ListProps = {
   _id: string;
   name: string;
   price: number;
   picture: string | null;
   onDelete: (_id: string) => void;
-}) => {
+  onEdit: (dessert: {
+    _id: string;
+    name: string;
+    price: number;
+    picture: string | null;
+    type: string;
+  }) => void;
+};
+
+const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
   const handleView = async () => {
     try {
       const { data } = await axios.get(
@@ -86,6 +89,28 @@ const List = ({
     }
   };
 
+  const handleEdit = async () => {
+    try {
+      const { data } = await axios.get(
+        `http://localhost:3000/desserts/${_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      onEdit(data);
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo obtener la información del postre para editar.",
+        icon: "error",
+        confirmButtonText: "Cerrar",
+      });
+    }
+  };
+
   return (
     <tr className="border-b border-gray-300 text-center">
       <td className="p-3">{name}</td>
@@ -98,7 +123,10 @@ const List = ({
         >
           <EyeIcon className="w-5 h-5" />
         </button>
-        <button className="text-yellow-500 hover:text-yellow-700">
+        <button
+          onClick={handleEdit}
+          className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
+        >
           <PencilIcon className="w-5 h-5" />
         </button>
         <button

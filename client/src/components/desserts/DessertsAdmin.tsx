@@ -9,6 +9,7 @@ type DessertType = {
   name: string;
   price: number;
   picture: string | null;
+  type: string;
 };
 
 type DessertCategory = {
@@ -79,6 +80,154 @@ const DessertsAdmin = () => {
     }));
   };
 
+  const handleEdit = async (dessert: DessertType) => {
+    const { value: formValues } = await Swal.fire({
+      title: "Editar Postre",
+      html: `
+        <input id="swal-name" class="swal2-input" placeholder="Nombre" value="${
+          dessert.name
+        }">
+        <input id="swal-price" type="number" class="swal2-input" placeholder="Precio" value="${
+          dessert.price
+        }">
+        <select id="swal-type" class="swal2-select">
+          ${dessertCategories
+            .map(
+              (cat) =>
+                `<option value="${cat.type}" ${
+                  cat.type === dessert.type ? "selected" : ""
+                }>${cat.label}</option>`
+            )
+            .join("")}
+        </select>
+        <input id="swal-picture" type="file" class="swal2-file">
+      `,
+      focusConfirm: false,
+      preConfirm: () => {
+        const name = (
+          document.getElementById("swal-name") as HTMLInputElement
+        )?.value.trim();
+        const price = (
+          document.getElementById("swal-price") as HTMLInputElement
+        )?.value.trim();
+        const type = (document.getElementById("swal-type") as HTMLSelectElement)
+          ?.value;
+        const picture = (
+          document.getElementById("swal-picture") as HTMLInputElement
+        )?.files?.[0];
+
+        const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
+
+        // Validaciones básicas
+        if (!name || !price || !type) {
+          Swal.showValidationMessage(
+            "Todos los campos son obligatorios, excepto la imagen."
+          );
+          return null; // Evitar que el formulario se cierre
+        }
+
+        if (!nameRegex.test(name)) {
+          Swal.showValidationMessage(
+            "El nombre solo puede contener letras, números y espacios."
+          );
+          return null; // Evitar que el formulario se cierre
+        }
+
+        const priceNumber = Number(price);
+        if (isNaN(priceNumber) || priceNumber <= 999) {
+          Swal.showValidationMessage(
+            "El precio debe ser un número mayor o igual a 1000."
+          );
+          return null; // Evitar que el formulario se cierre
+        }
+
+        // Verificar si ya existe un postre con el mismo nombre (excluyendo el postre actual)
+        const existingDessert = Object.values(desserts)
+          .flat()
+          .find((d) => d.name === name && d._id !== dessert._id);
+
+        if (existingDessert) {
+          Swal.showValidationMessage("Ya existe un postre con ese nombre.");
+          return null; // Evitar que el formulario se cierre
+        }
+
+        // Verificar si se realizaron cambios
+        const hasChanges =
+          name !== dessert.name ||
+          priceNumber !== dessert.price ||
+          type !== dessert.type ||
+          picture !== undefined;
+
+        if (!hasChanges) {
+          Swal.showValidationMessage("No se realizaron cambios.");
+          return null; // Evitar que el formulario se cierre
+        }
+
+        return { name, price: priceNumber, type, picture };
+      },
+    });
+
+    if (formValues) {
+      const updateObject: Partial<DessertType> = {};
+
+      if (formValues.name !== dessert.name) {
+        updateObject.name = formValues.name;
+      }
+      if (formValues.price !== dessert.price) {
+        updateObject.price = formValues.price;
+      }
+      if (formValues.type !== dessert.type) {
+        updateObject.type = formValues.type;
+      }
+      if (formValues.picture) {
+        updateObject.picture = `/images/${formValues.picture.name}`;
+      }
+
+      const formData = new FormData();
+      if (updateObject.name) formData.append("name", updateObject.name);
+      if (updateObject.price)
+        formData.append("price", updateObject.price.toString());
+      if (updateObject.type) formData.append("type", updateObject.type);
+      if (formValues.picture) {
+        formData.append("picture", formValues.picture);
+      }
+
+      try {
+        const response = await axios.patch(
+          `http://localhost:3000/desserts/${dessert._id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        // Actualizar el estado con el postre actualizado
+        setDesserts((prev) => ({
+          ...prev,
+          [dessert.type]: prev[dessert.type].map((d) =>
+            d._id === dessert._id ? response.data : d
+          ),
+        }));
+
+        Swal.fire("Éxito", "Postre actualizado correctamente", "success");
+      } catch (error: any) {
+        let errorMessage = "Ocurrió un error al actualizar el postre.";
+
+        if (error.response) {
+          errorMessage = error.response.data.message || error.response.data;
+        } else if (error.request) {
+          errorMessage = "No se recibió respuesta del servidor.";
+        } else {
+          errorMessage = error.message;
+        }
+
+        Swal.fire("Error", errorMessage, "error");
+      }
+    }
+  };
   const handleAddDessert = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Agregar Postre",
@@ -107,7 +256,6 @@ const DessertsAdmin = () => {
           document.getElementById("swal-picture") as HTMLInputElement
         )?.files?.[0];
 
-        // Expresión regular para validar el nombre
         const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
 
         if (!name || !price || !type) {
@@ -125,10 +273,23 @@ const DessertsAdmin = () => {
         }
 
         const priceNumber = Number(price);
-        if (isNaN(priceNumber) || priceNumber <= 999) {
+        if (isNaN(priceNumber)) {
+          Swal.showValidationMessage("El precio debe ser un número.");
+          return false;
+        }
+        if (priceNumber <= 999) {
           Swal.showValidationMessage(
             "El precio debe ser un número mayor o igual a 1000."
           );
+          return false;
+        }
+
+        const existingDessert = Object.values(desserts)
+          .flat()
+          .find((dessert) => dessert.name === name);
+
+        if (existingDessert) {
+          Swal.showValidationMessage("Ya existe un postre con ese nombre.");
           return false;
         }
 
@@ -164,7 +325,16 @@ const DessertsAdmin = () => {
 
         Swal.fire("Éxito", "Postre agregado correctamente", "success");
       } catch (error: any) {
-        const errorMessage = error.response?.data;
+        let errorMessage = "Ocurrió un error al agregar el postre.";
+
+        if (error.response) {
+          errorMessage = error.response.data.message || error.response.data;
+        } else if (error.request) {
+          errorMessage = "No se recibió respuesta del servidor.";
+        } else {
+          errorMessage = error.message;
+        }
+
         Swal.fire("Error", errorMessage, "error");
       }
     }
@@ -209,8 +379,12 @@ const DessertsAdmin = () => {
                   {desserts[type].map((dessert) => (
                     <List
                       key={dessert._id}
-                      {...dessert}
+                      _id={dessert._id}
+                      name={dessert.name}
+                      price={dessert.price}
+                      picture={dessert.picture}
                       onDelete={handleDelete}
+                      onEdit={handleEdit}
                     />
                   ))}
                 </tbody>
