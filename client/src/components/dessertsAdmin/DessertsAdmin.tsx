@@ -91,7 +91,7 @@ const DessertsAdmin = () => {
         <input id="swal-price" type="number" class="swal2-input" placeholder="Precio" value="${
           dessert.price
         }">
-        <select id="swal-type" class="swal2-select">
+        <select id="swal-type" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
           ${dessertCategories
             .map(
               (cat) =>
@@ -101,9 +101,9 @@ const DessertsAdmin = () => {
             )
             .join("")}
         </select>
-        <div style="display: flex; flex-direction: column; width: 60%; align-items: center; margin: 0 auto; margin-top: 10px;">
+        <div style="display: flex; flex-direction: column; width: 60%; align-items: center; margin: 0 auto; margin-top: 30px;">
           <label for="swal-active" style="border: 1px solid #ccc; padding: 5px; border-radius: 4px; align-self: flex-start;">Activo:</label>
-          <select id="swal-active" class="swal2-select">
+          <select id="swal-active" class="swal2-select" style="width: 100%; border: 1px solid lightgray; border-radius: 5px; margin-bottom: 20px;">
             <option value="true" ${dessert.active ? "selected" : ""}>Sí</option>
             <option value="false" ${
               !dessert.active ? "selected" : ""

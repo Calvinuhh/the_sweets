@@ -18,7 +18,7 @@ import {
 
 const dessertsRouter: Router = Router();
 
-// dessertsRouter.use(adminAuthorization);
+dessertsRouter.use(adminAuthorization);
 
 dessertsRouter.param("_id", validateObjectId);
 

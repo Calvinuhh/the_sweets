@@ -3,13 +3,11 @@ import InstagramPost from "./InstagramPost";
 
 const About = () => {
   useEffect(() => {
-    // Función para cargar el script de Instagram
     const loadInstagramScript = () => {
       const script = document.createElement("script");
       script.src = "https://www.instagram.com/embed.js";
       script.async = true;
       script.onload = () => {
-        // Forzar la renderización de los embeds después de cargar el script
         if (window.instgrm) {
           window.instgrm.Embeds.process();
         }
@@ -19,21 +17,38 @@ const About = () => {
       return script;
     };
 
-    // Cargar el script
     const script = loadInstagramScript();
 
-    // Limpiar el script cuando el componente se desmonte
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
-  // Array de códigos de publicaciones de Instagram
   const posts = [
-    { code: "CIf_XsAnvqr", text: "Texto 1" },
-    { code: "CGxnEtrH-de", text: "Texto 2" },
-    { code: "CKKtXNNnzQP", text: "Texto 3" },
-    { code: "CBn1HXClsG9", text: "Texto 4" },
+    {
+      code: "CIf_XsAnvqr",
+      text: "Texto 1",
+      parrafo:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem consequuntur id excepturi quisquam ipsum. Doloribus fugiat laudantium eius amet ipsa, dignissimos perferendis eum minus tempora. Nemo nulla aut quasi recusandae? Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    },
+    {
+      code: "CGxnEtrH-de",
+      text: "Texto 2",
+      parrafo:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem consequuntur id excepturi quisquam ipsum. Doloribus fugiat laudantium eius amet ipsa, dignissimos perferendis eum minus tempora. Nemo nulla aut quasi recusandae? Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    },
+    {
+      code: "CKKtXNNnzQP",
+      text: "Texto 3",
+      parrafo:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem consequuntur id excepturi quisquam ipsum. Doloribus fugiat laudantium eius amet ipsa, dignissimos perferendis eum minus tempora. Nemo nulla aut quasi recusandae? Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    },
+    {
+      code: "CBn1HXClsG9",
+      text: "Texto 4",
+      parrafo:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem consequuntur id excepturi quisquam ipsum. Doloribus fugiat laudantium eius amet ipsa, dignissimos perferendis eum minus tempora. Nemo nulla aut quasi recusandae? Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+    },
   ];
 
   return (
@@ -45,23 +60,15 @@ const About = () => {
             index % 2 === 0 ? "flex-row" : "flex-row-reverse"
           } items-center justify-between`}
         >
-          {/* Contenedor de Instagram */}
           <div className="flex-1">
             <InstagramPost code={post.code} />
           </div>
 
-          {/* Contenedor de texto */}
           <div className="flex-1 p-4">
             <h3 className="text-2xl font-semibold text-gray-800">
               {post.text}
             </h3>
-            <p className="text-gray-600 mt-2">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem
-              consequuntur id excepturi quisquam ipsum. Doloribus fugiat
-              laudantium eius amet ipsa, dignissimos perferendis eum minus
-              tempora. Nemo nulla aut quasi recusandae? Lorem ipsum dolor sit
-              amet consectetur adipisicing elit.
-            </p>
+            <p className="text-gray-600 mt-2">{post.parrafo}</p>
           </div>
         </div>
       ))}

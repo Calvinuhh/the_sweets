@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AdminNav from "../components/AdminNav";
-import DessertsAdmin from "../components/desserts/DessertsAdmin";
-import OrdersAdmin from "../components/orders/OrdersAdmin";
+import DessertsAdmin from "../components/dessertsAdmin/DessertsAdmin";
+import OrdersAdmin from "../components/ordersAdmin/OrdersAdmin";
 import { useNavigate } from "react-router-dom";
 
 const AdminResources = () => {
