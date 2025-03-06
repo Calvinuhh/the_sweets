@@ -1,4 +1,9 @@
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  EyeIcon,
+  PencilIcon,
+  TrashIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import axios from "axios";
 
@@ -7,6 +12,7 @@ type ListProps = {
   name: string;
   price: number;
   picture: string | null;
+  active: boolean;
   onDelete: (_id: string) => void;
   onEdit: (dessert: {
     _id: string;
@@ -14,10 +20,21 @@ type ListProps = {
     price: number;
     picture: string | null;
     type: string;
+    active: boolean;
   }) => void;
+  onDeleteImage: (id: string, type: string) => void;
 };
 
-const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
+const List = ({
+  _id,
+  name,
+  price,
+  picture,
+  active,
+  onDelete,
+  onEdit,
+  onDeleteImage,
+}: ListProps) => {
   const handleView = async () => {
     try {
       const { data } = await axios.get(
@@ -35,6 +52,7 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
           <p><strong>Nombre:</strong> ${data.name}</p>
           <p><strong>Precio:</strong> $${data.price}</p>
           <p><strong>Tipo:</strong> ${data.type}</p>
+          <p><strong>Activo:</strong> ${data.active ? "Sí" : "No"}</p>
           <br/>
           ${
             data.picture
@@ -46,10 +64,13 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
         `,
         confirmButtonText: "Cerrar",
       });
-    } catch (error) {
+    } catch (error: any) {
       Swal.fire({
         title: "Error",
-        text: "No se pudo obtener la información del postre.",
+        text:
+          error.response?.data ||
+          error.message ||
+          "No se pudo obtener la información del postre.",
         icon: "error",
         confirmButtonText: "Cerrar",
       });
@@ -78,10 +99,13 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
 
         Swal.fire("Eliminado", "El postre ha sido eliminado.", "success");
         onDelete(_id);
-      } catch (error) {
+      } catch (error: any) {
         Swal.fire({
           title: "Error",
-          text: "No se pudo eliminar el postre.",
+          text:
+            error.response?.data ||
+            error.message ||
+            "No se pudo eliminar el postre.",
           icon: "error",
           confirmButtonText: "Cerrar",
         });
@@ -101,13 +125,60 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
       );
 
       onEdit(data);
-    } catch (error) {
+    } catch (error: any) {
       Swal.fire({
         title: "Error",
-        text: "No se pudo obtener la información del postre para editar.",
+        text:
+          error.response?.data ||
+          error.message ||
+          "No se pudo obtener la información del postre para editar.",
         icon: "error",
         confirmButtonText: "Cerrar",
       });
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    const result = await Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará la imagen del postre.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const { data } = await axios.delete(
+          `http://localhost:3000/desserts/picture/${_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        Swal.fire(
+          "Éxito",
+          "La imagen del postre ha sido eliminada.",
+          "success"
+        );
+
+        onDeleteImage(_id, data.type);
+      } catch (error: any) {
+        Swal.fire({
+          title: "Error",
+          text:
+            error.response?.data ||
+            error.message ||
+            "No se pudo eliminar la imagen del postre.",
+          icon: "error",
+          confirmButtonText: "Cerrar",
+        });
+      }
     }
   };
 
@@ -116,6 +187,7 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
       <td className="p-3">{name}</td>
       <td className="p-3">${price}</td>
       <td className="p-3">{picture ? "Sí" : "No"}</td>
+      <td className="p-3">{active ? "Sí" : "No"}</td>
       <td className="p-3 flex justify-center gap-3">
         <button
           onClick={handleView}
@@ -128,6 +200,12 @@ const List = ({ _id, name, price, picture, onDelete, onEdit }: ListProps) => {
           className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
         >
           <PencilIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={handleDeleteImage}
+          className="text-red-500 hover:text-red-700 cursor-pointer"
+        >
+          <PhotoIcon className="w-5 h-5" />
         </button>
         <button
           onClick={handleDelete}

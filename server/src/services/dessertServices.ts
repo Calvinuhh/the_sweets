@@ -37,14 +37,14 @@ export const getDessertById = async (_id: string) => {
 };
 
 export const updateDessert = async (_id: string, data: UpdateDessert) => {
-  const { name, picture, price, type } = data;
+  const { name, picture, price, type, active } = data;
 
   const dessert = await Dessert.findById(_id);
   if (!dessert) throw Error("Postre no encontrado");
 
   if (name) {
-    const existingDessert = await Dessert.findOne({ name });
-    if (existingDessert && existingDessert._id.toString() !== _id) {
+    const dessertName = await Dessert.findOne({ name });
+    if (dessertName) {
       throw new Error("Ya existe un postre con ese nombre");
     }
   }
@@ -68,6 +68,7 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
   if (price) updateObject.price = price;
   if (type) updateObject.type = type;
   if (picture) updateObject.picture = picture;
+  if (active) updateObject.active = active;
 
   return await Dessert.findByIdAndUpdate(_id, updateObject, { new: true });
 };
@@ -88,4 +89,24 @@ export const deleteDessert = async (_id: string) => {
   }
 
   await Dessert.findByIdAndDelete(_id);
+};
+
+export const deleteImageDessert = async (_id: string) => {
+  const dessert = await Dessert.findById(_id);
+
+  if (!dessert) throw Error("Postre no encontrado");
+
+  if (!dessert.picture) throw Error("El postre no tiene una imagen");
+
+  if (dessert.picture && typeof dessert.picture === "string") {
+    const filePath = path.join(__dirname, "..", dessert.picture);
+
+    fs.unlink(filePath, (err) => {
+      if (err && err.code !== "ENOENT") {
+        throw Error("Error al eliminar el archivo: " + err.message);
+      }
+    });
+  }
+
+  return await Dessert.findByIdAndUpdate(_id, { picture: null }, { new: true });
 };

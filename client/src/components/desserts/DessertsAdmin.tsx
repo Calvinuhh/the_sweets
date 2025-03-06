@@ -10,6 +10,7 @@ type DessertType = {
   price: number;
   picture: string | null;
   type: string;
+  active: boolean;
 };
 
 type DessertCategory = {
@@ -100,6 +101,15 @@ const DessertsAdmin = () => {
             )
             .join("")}
         </select>
+        <div style="display: flex; flex-direction: column; width: 60%; align-items: center; margin: 0 auto; margin-top: 10px;">
+          <label for="swal-active" style="border: 1px solid #ccc; padding: 5px; border-radius: 4px; align-self: flex-start;">Activo:</label>
+          <select id="swal-active" class="swal2-select">
+            <option value="true" ${dessert.active ? "selected" : ""}>Sí</option>
+            <option value="false" ${
+              !dessert.active ? "selected" : ""
+            }>No</option>
+          </select>
+        </div>
         <input id="swal-picture" type="file" class="swal2-file">
       `,
       focusConfirm: false,
@@ -112,25 +122,27 @@ const DessertsAdmin = () => {
         )?.value.trim();
         const type = (document.getElementById("swal-type") as HTMLSelectElement)
           ?.value;
+        const active =
+          (document.getElementById("swal-active") as HTMLSelectElement)
+            ?.value === "true";
         const picture = (
           document.getElementById("swal-picture") as HTMLInputElement
         )?.files?.[0];
 
         const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
 
-        // Validaciones básicas
         if (!name || !price || !type) {
           Swal.showValidationMessage(
             "Todos los campos son obligatorios, excepto la imagen."
           );
-          return null; // Evitar que el formulario se cierre
+          return null;
         }
 
         if (!nameRegex.test(name)) {
           Swal.showValidationMessage(
             "El nombre solo puede contener letras, números y espacios."
           );
-          return null; // Evitar que el formulario se cierre
+          return null;
         }
 
         const priceNumber = Number(price);
@@ -138,32 +150,31 @@ const DessertsAdmin = () => {
           Swal.showValidationMessage(
             "El precio debe ser un número mayor o igual a 1000."
           );
-          return null; // Evitar que el formulario se cierre
+          return null;
         }
 
-        // Verificar si ya existe un postre con el mismo nombre (excluyendo el postre actual)
         const existingDessert = Object.values(desserts)
           .flat()
           .find((d) => d.name === name && d._id !== dessert._id);
 
         if (existingDessert) {
           Swal.showValidationMessage("Ya existe un postre con ese nombre.");
-          return null; // Evitar que el formulario se cierre
+          return null;
         }
 
-        // Verificar si se realizaron cambios
         const hasChanges =
           name !== dessert.name ||
           priceNumber !== dessert.price ||
           type !== dessert.type ||
+          active !== dessert.active ||
           picture !== undefined;
 
         if (!hasChanges) {
           Swal.showValidationMessage("No se realizaron cambios.");
-          return null; // Evitar que el formulario se cierre
+          return null;
         }
 
-        return { name, price: priceNumber, type, picture };
+        return { name, price: priceNumber, type, active, picture };
       },
     });
 
@@ -179,6 +190,9 @@ const DessertsAdmin = () => {
       if (formValues.type !== dessert.type) {
         updateObject.type = formValues.type;
       }
+      if (formValues.active !== dessert.active) {
+        updateObject.active = formValues.active;
+      }
       if (formValues.picture) {
         updateObject.picture = `/images/${formValues.picture.name}`;
       }
@@ -188,6 +202,8 @@ const DessertsAdmin = () => {
       if (updateObject.price)
         formData.append("price", updateObject.price.toString());
       if (updateObject.type) formData.append("type", updateObject.type);
+      if (updateObject.active !== undefined)
+        formData.append("active", updateObject.active.toString());
       if (formValues.picture) {
         formData.append("picture", formValues.picture);
       }
@@ -204,7 +220,6 @@ const DessertsAdmin = () => {
           }
         );
 
-        // Actualizar el estado con el postre actualizado
         setDesserts((prev) => ({
           ...prev,
           [dessert.type]: prev[dessert.type].map((d) =>
@@ -340,6 +355,15 @@ const DessertsAdmin = () => {
     }
   };
 
+  const handleDeleteImage = (id: string, type: string) => {
+    setDesserts((prev) => ({
+      ...prev,
+      [type]: prev[type].map((dessert) =>
+        dessert._id === id ? { ...dessert, picture: null } : dessert
+      ),
+    }));
+  };
+
   return (
     <div className="p-4 font-lato">
       <div className="flex justify-center items-center gap-10 mb-[100px] mt-10">
@@ -372,6 +396,7 @@ const DessertsAdmin = () => {
                     <th className="p-3 border border-gray-300">Nombre</th>
                     <th className="p-3 border border-gray-300">Precio</th>
                     <th className="p-3 border border-gray-300">Imagen</th>
+                    <th className="p-3 border border-gray-300">Activo</th>
                     <th className="p-3 border border-gray-300">Opciones</th>
                   </tr>
                 </thead>
@@ -383,8 +408,10 @@ const DessertsAdmin = () => {
                       name={dessert.name}
                       price={dessert.price}
                       picture={dessert.picture}
+                      active={dessert.active}
                       onDelete={handleDelete}
                       onEdit={handleEdit}
+                      onDeleteImage={handleDeleteImage}
                     />
                   ))}
                 </tbody>
