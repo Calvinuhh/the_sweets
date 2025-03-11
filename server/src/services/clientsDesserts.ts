@@ -3,6 +3,7 @@ import Dessert from "../models/Dessert";
 interface QueryType {
   active: boolean;
   type?: string;
+  price?: string;
 }
 
 export const getDesserts = async (price?: string, type?: string) => {

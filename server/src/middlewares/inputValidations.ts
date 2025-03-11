@@ -6,7 +6,11 @@ import {
   validateActive,
 } from "../utils/inputValidations";
 
-export const newDessertMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const newDessertMiddleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { name, price, type } = req.body;
 

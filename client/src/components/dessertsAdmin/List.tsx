@@ -23,6 +23,7 @@ type ListProps = {
     active: boolean;
   }) => void;
   onDeleteImage: (id: string, type: string) => void;
+  onUploadImage: (id: string) => void;
 };
 
 const List = ({
@@ -34,6 +35,7 @@ const List = ({
   onDelete,
   onEdit,
   onDeleteImage,
+  onUploadImage,
 }: ListProps) => {
   const handleView = async () => {
     try {
@@ -182,6 +184,51 @@ const List = ({
     }
   };
 
+  const handleUploadImage = async () => {
+    const { value: file } = await Swal.fire({
+      title: "Subir imagen",
+      input: "file",
+      inputAttributes: {
+        accept: "image/*",
+        "aria-label": "Subir imagen",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Subir",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (file) {
+      const formData = new FormData();
+      formData.append("picture", file);
+
+      try {
+        await axios.patch(
+          `http://localhost:3000/desserts/picture/${_id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        Swal.fire("Éxito", "Imagen subida correctamente", "success");
+        onUploadImage(_id);
+      } catch (error: any) {
+        Swal.fire({
+          title: "Error",
+          text:
+            error.response?.data ||
+            error.message ||
+            "No se pudo subir la imagen.",
+          icon: "error",
+          confirmButtonText: "Cerrar",
+        });
+      }
+    }
+  };
+
   return (
     <tr className="border-b border-gray-300 text-center">
       <td className="p-3">{name}</td>
@@ -194,6 +241,12 @@ const List = ({
           className="text-blue-500 hover:text-blue-700 cursor-pointer"
         >
           <EyeIcon className="w-5 h-5" />
+        </button>
+        <button
+          onClick={handleUploadImage}
+          className="text-green-500 hover:text-green-700 cursor-pointer"
+        >
+          <PhotoIcon className="w-5 h-5" />
         </button>
         <button
           onClick={handleEdit}

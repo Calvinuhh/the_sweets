@@ -21,7 +21,7 @@ export const validateDessertTypes = (type: string) => {
     );
 };
 
-export const validateActive = (param: string) => {
-  if (param !== "true" && param !== "false")
+export const validateActive = (param: boolean) => {
+  if (param !== true && param !== false)
     throw Error("El campo 'active' debe ser true o false");
 };

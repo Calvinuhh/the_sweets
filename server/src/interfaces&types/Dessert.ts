@@ -11,5 +11,5 @@ export default interface Dessert {
   active: boolean;
 }
 
-export type CreateDessert = Omit<Dessert, "_id" | "active">;
-export type UpdateDessert = Partial<Dessert>;
+export type CreateDessert = Pick<Dessert, "name" | "price" | "type">;
+export type UpdateDessert = Partial<Omit<Dessert, "_id" | "picture">>;

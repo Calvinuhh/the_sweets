@@ -81,6 +81,20 @@ const DessertsAdmin = () => {
     }));
   };
 
+  const handleUploadImage = (id: string) => {
+    setDesserts((prev) => {
+      const updatedDesserts = { ...prev };
+      Object.keys(updatedDesserts).forEach((type) => {
+        updatedDesserts[type] = updatedDesserts[type].map((dessert) =>
+          dessert._id === id
+            ? { ...dessert, picture: `/images/${id}.jpg` }
+            : dessert
+        );
+      });
+      return updatedDesserts;
+    });
+  };
+
   const handleEdit = async (dessert: DessertType) => {
     const { value: formValues } = await Swal.fire({
       title: "Editar Postre",
@@ -110,7 +124,6 @@ const DessertsAdmin = () => {
             }>No</option>
           </select>
         </div>
-        <input id="swal-picture" type="file" class="swal2-file">
       `,
       focusConfirm: false,
       preConfirm: () => {
@@ -125,18 +138,8 @@ const DessertsAdmin = () => {
         const active =
           (document.getElementById("swal-active") as HTMLSelectElement)
             ?.value === "true";
-        const picture = (
-          document.getElementById("swal-picture") as HTMLInputElement
-        )?.files?.[0];
 
         const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
-
-        if (!name || !price || !type) {
-          Swal.showValidationMessage(
-            "Todos los campos son obligatorios, excepto la imagen."
-          );
-          return null;
-        }
 
         if (!nameRegex.test(name)) {
           Swal.showValidationMessage(
@@ -166,55 +169,40 @@ const DessertsAdmin = () => {
           name !== dessert.name ||
           priceNumber !== dessert.price ||
           type !== dessert.type ||
-          active !== dessert.active ||
-          picture !== undefined;
+          active !== dessert.active;
 
         if (!hasChanges) {
           Swal.showValidationMessage("No se realizaron cambios.");
           return null;
         }
 
-        return { name, price: priceNumber, type, active, picture };
+        return { name, price: priceNumber, type, active };
       },
     });
 
     if (formValues) {
-      const updateObject: Partial<DessertType> = {};
-
-      if (formValues.name !== dessert.name) {
-        updateObject.name = formValues.name;
-      }
-      if (formValues.price !== dessert.price) {
-        updateObject.price = formValues.price;
-      }
-      if (formValues.type !== dessert.type) {
-        updateObject.type = formValues.type;
-      }
-      if (formValues.active !== dessert.active) {
-        updateObject.active = formValues.active;
-      }
-      if (formValues.picture) {
-        updateObject.picture = `/images/${formValues.picture.name}`;
-      }
-
-      const formData = new FormData();
-      if (updateObject.name) formData.append("name", updateObject.name);
-      if (updateObject.price)
-        formData.append("price", updateObject.price.toString());
-      if (updateObject.type) formData.append("type", updateObject.type);
-      if (updateObject.active !== undefined)
-        formData.append("active", updateObject.active.toString());
-      if (formValues.picture) {
-        formData.append("picture", formValues.picture);
-      }
-
       try {
+        const updatedFields: Partial<DessertType> = {};
+
+        if (formValues.name !== dessert.name) {
+          updatedFields.name = formValues.name;
+        }
+        if (formValues.price !== dessert.price) {
+          updatedFields.price = formValues.price;
+        }
+        if (formValues.type !== dessert.type) {
+          updatedFields.type = formValues.type;
+        }
+        if (formValues.active !== dessert.active) {
+          updatedFields.active = formValues.active;
+        }
+
         const response = await axios.patch(
           `http://localhost:3000/desserts/${dessert._id}`,
-          formData,
+          updatedFields,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
@@ -243,19 +231,19 @@ const DessertsAdmin = () => {
       }
     }
   };
+
   const handleAddDessert = async () => {
     const { value: formValues } = await Swal.fire({
       title: "Agregar Postre",
       html: `
         <input id="swal-name" class="swal2-input" placeholder="Nombre">
         <input id="swal-price" type="number" class="swal2-input" placeholder="Precio">
-        <select id="swal-type" class="swal2-select">
+        <select id="swal-type" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
           <option value="" disabled selected>Selecciona el tipo de postre</option>
           ${dessertCategories
             .map((cat) => `<option value="${cat.type}">${cat.label}</option>`)
             .join("")}
         </select>
-        <input id="swal-picture" type="file" class="swal2-file">
       `,
       focusConfirm: false,
       preConfirm: () => {
@@ -267,16 +255,11 @@ const DessertsAdmin = () => {
         )?.value.trim();
         const type = (document.getElementById("swal-type") as HTMLSelectElement)
           ?.value;
-        const picture = (
-          document.getElementById("swal-picture") as HTMLInputElement
-        )?.files?.[0];
 
         const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
 
         if (!name || !price || !type) {
-          Swal.showValidationMessage(
-            "Todos los campos son obligatorios, excepto la imagen."
-          );
+          Swal.showValidationMessage("Todos los campos son obligatorios");
           return false;
         }
 
@@ -308,26 +291,22 @@ const DessertsAdmin = () => {
           return false;
         }
 
-        return { name, price: priceNumber, type, picture };
+        return { name, price: priceNumber, type };
       },
     });
 
     if (formValues) {
-      const formData = new FormData();
-      formData.append("name", formValues.name);
-      formData.append("price", formValues.price.toString());
-      formData.append("type", formValues.type);
-      if (formValues.picture) {
-        formData.append("picture", formValues.picture);
-      }
-
       try {
         const response = await axios.post(
           "http://localhost:3000/desserts",
-          formData,
+          {
+            name: formValues.name,
+            price: formValues.price,
+            type: formValues.type,
+          },
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           }
@@ -412,6 +391,7 @@ const DessertsAdmin = () => {
                       onDelete={handleDelete}
                       onEdit={handleEdit}
                       onDeleteImage={handleDeleteImage}
+                      onUploadImage={handleUploadImage}
                     />
                   ))}
                 </tbody>

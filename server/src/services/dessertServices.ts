@@ -4,13 +4,13 @@ import path from "path";
 import fs from "fs";
 
 export const createDessert = async (data: CreateDessert) => {
-  const { name, picture, price, type } = data;
+  const { name, price, type } = data;
 
   const dessertName = await Dessert.findOne({ name });
 
   if (dessertName) throw Error("Ya existe un postre con ese nombre");
 
-  return await Dessert.create({ name, picture, price, type });
+  return await Dessert.create({ name, price, type });
 };
 
 export const getDesserts = async (type?: string) => {
@@ -37,7 +37,7 @@ export const getDessertById = async (_id: string) => {
 };
 
 export const updateDessert = async (_id: string, data: UpdateDessert) => {
-  const { name, picture, price, type, active } = data;
+  const { name, price, type, active } = data;
 
   const dessert = await Dessert.findById(_id);
   if (!dessert) throw Error("Postre no encontrado");
@@ -49,28 +49,30 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
     }
   }
 
-  if (picture && dessert.picture) {
-    const oldFilePath = path.join(
-      __dirname,
-      "../images",
-      path.basename(dessert.picture)
-    );
-
-    fs.unlink(oldFilePath, (err) => {
-      if (err && err.code !== "ENOENT") {
-        throw Error(err.message);
-      }
-    });
-  }
-
   const updateObject: UpdateDessert = {};
   if (name) updateObject.name = name;
   if (price) updateObject.price = price;
   if (type) updateObject.type = type;
-  if (picture) updateObject.picture = picture;
   if (active) updateObject.active = active;
 
   return await Dessert.findByIdAndUpdate(_id, updateObject, { new: true });
+};
+
+export const addPicture = async (_id: string, picturePath: string) => {
+  const dessert = await Dessert.findById(_id);
+
+  if (!dessert) {
+    throw new Error("Postre no encontrado");
+  }
+
+  if (dessert.picture) {
+    throw new Error("El postre ya tiene una imagen asociada");
+  }
+
+  dessert.picture = picturePath;
+  await dessert.save();
+
+  return dessert;
 };
 
 export const deleteDessert = async (_id: string) => {

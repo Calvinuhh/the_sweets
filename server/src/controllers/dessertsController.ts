@@ -5,6 +5,7 @@ import {
   updateDessert,
   deleteDessert,
   getDessertById,
+  addPicture,
   deleteImageDessert,
 } from "../services/dessertServices";
 
@@ -15,7 +16,6 @@ export const createDessertController = async (req: Request, res: Response) => {
     const newDessert = await createDessert({
       name,
       price,
-      picture: req.file ? `/images/${req.file.filename}` : null,
       type,
     });
 
@@ -56,7 +56,6 @@ export const updateDessertsController = async (req: Request, res: Response) => {
     const updatedDessert = await updateDessert(_id, {
       name,
       price,
-      picture: req.file ? `/images/${req.file.filename}` : req.body.picture,
       type,
       active,
     });
@@ -72,6 +71,27 @@ export const deleteDessertsController = async (req: Request, res: Response) => {
     const { _id } = req.params;
     await deleteDessert(_id);
     res.status(204).json("Postre Eliminado");
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json(err.message);
+  }
+};
+
+export const addPictureDessertController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { _id } = req.params;
+
+    if (!req.file) throw Error("No se ha subido ninguna imagen");
+
+    const updatedDessert = await addPicture(
+      _id,
+      `/images/${req.file.filename}`
+    );
+
+    res.status(200).json(updatedDessert);
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

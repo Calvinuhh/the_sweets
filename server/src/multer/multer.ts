@@ -1,51 +1,25 @@
 import multer from "multer";
 import path from "path";
 import Dessert from "../models/Dessert";
+import { Request, Response, NextFunction } from "express";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, path.join(__dirname, "../images"));
   },
   filename: async (req, file, cb) => {
+    const { _id } = req.params;
+
     try {
-      const { name, price, type } = req.body;
+      const dessert = await Dessert.findById(_id);
 
-      if (!name) return cb(new Error("El campo 'name' es requerido"), "");
-
-      if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(name))
-        return cb(
-          new Error("El campo 'name' solo puede tener letras y numeros"),
-          ""
-        );
-
-      const dessertName = await Dessert.findOne({ name });
-      if (dessertName) {
-        return cb(new Error("Ya existe un postre con ese nombre"), "");
+      if (!dessert) {
+        return cb(new Error("Postre no encontrado"), "");
       }
 
-      if (!price) return cb(new Error("El campo 'price' es requerido"), "");
-
-      if (isNaN(price))
-        return cb(new Error("El campo 'price' debe ser un numero"), "");
-
-      if (price <= 999)
-        return cb(
-          new Error("El precio debe ser un número mayor o igual a 1000."),
-          ""
-        );
-
-      if (
-        type != "postre_frio" &&
-        type != "galleta" &&
-        type != "rollo" &&
-        type != "torta"
-      )
-        return cb(
-          new Error(
-            "Los tipos de postre permitidos son: 'postre_frio', 'galleta', 'rollo' y 'torta'"
-          ),
-          ""
-        );
+      if (dessert.picture) {
+        return cb(new Error("El postre ya tiene una imagen asociada"), "");
+      }
 
       const ext = path.extname(file.originalname);
       const now = new Date();
@@ -81,5 +55,20 @@ const upload = multer({
   storage,
   fileFilter,
 });
+
+export const multerError = (
+  err: Error | multer.MulterError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (err instanceof multer.MulterError) {
+    res.status(400).json(err.message);
+  } else if (err) {
+    res.status(400).json(err.message);
+  } else {
+    next();
+  }
+};
 
 export default upload;
