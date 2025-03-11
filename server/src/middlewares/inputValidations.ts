@@ -38,13 +38,15 @@ export const patchDessertMiddleware = (
     const { name, price, type, active } = req.body;
 
     for (const key in req.body) {
-      if (!req.body[key]) throw Error(`El campo '${key}' es requerido`);
+      if (key !== "active" && !req.body[key]) {
+        throw Error(`El campo '${key}' es requerido`);
+      }
     }
 
     if (name) validateName(name);
     if (price) validatePrice(price);
     if (type) validateDessertTypes(type);
-    if (active) validateActive(active);
+    if (active !== undefined) validateActive(active);
 
     next();
   } catch (error) {

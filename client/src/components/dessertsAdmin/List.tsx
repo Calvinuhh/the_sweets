@@ -219,9 +219,7 @@ const List = ({
         Swal.fire({
           title: "Error",
           text:
-            error.response?.data ||
-            error.message ||
-            "No se pudo subir la imagen.",
+            error.response?.data || error.message || "Error al subir imagen",
           icon: "error",
           confirmButtonText: "Cerrar",
         });
@@ -244,7 +242,12 @@ const List = ({
         </button>
         <button
           onClick={handleUploadImage}
-          className="text-green-500 hover:text-green-700 cursor-pointer"
+          disabled={!!picture}
+          className={`${
+            picture
+              ? "text-gray-400 opacity-50 cursor-not-allowed"
+              : "text-green-500 hover:text-green-700 cursor-pointer"
+          }`}
         >
           <PhotoIcon className="w-5 h-5" />
         </button>
@@ -256,7 +259,12 @@ const List = ({
         </button>
         <button
           onClick={handleDeleteImage}
-          className="text-red-500 hover:text-red-700 cursor-pointer"
+          disabled={!picture}
+          className={`${
+            !picture
+              ? "text-gray-400 opacity-50 cursor-not-allowed"
+              : "text-red-500 hover:text-red-700 cursor-pointer"
+          }`}
         >
           <PhotoIcon className="w-5 h-5" />
         </button>

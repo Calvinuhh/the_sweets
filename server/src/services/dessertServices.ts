@@ -53,26 +53,9 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
   if (name) updateObject.name = name;
   if (price) updateObject.price = price;
   if (type) updateObject.type = type;
-  if (active) updateObject.active = active;
+  if (active !== undefined) updateObject.active = active;
 
   return await Dessert.findByIdAndUpdate(_id, updateObject, { new: true });
-};
-
-export const addPicture = async (_id: string, picturePath: string) => {
-  const dessert = await Dessert.findById(_id);
-
-  if (!dessert) {
-    throw new Error("Postre no encontrado");
-  }
-
-  if (dessert.picture) {
-    throw new Error("El postre ya tiene una imagen asociada");
-  }
-
-  dessert.picture = picturePath;
-  await dessert.save();
-
-  return dessert;
 };
 
 export const deleteDessert = async (_id: string) => {
@@ -91,6 +74,23 @@ export const deleteDessert = async (_id: string) => {
   }
 
   await Dessert.findByIdAndDelete(_id);
+};
+
+export const addPicture = async (_id: string, picturePath: string) => {
+  const dessert = await Dessert.findById(_id);
+
+  if (!dessert) {
+    throw new Error("Postre no encontrado");
+  }
+
+  if (dessert.picture) {
+    throw new Error("El postre ya tiene una imagen asociada");
+  }
+
+  dessert.picture = picturePath;
+  await dessert.save();
+
+  return dessert;
 };
 
 export const deleteImageDessert = async (_id: string) => {
