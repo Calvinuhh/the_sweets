@@ -40,7 +40,7 @@ const List = ({
   const handleView = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3000/desserts/${_id}`,
+        `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -93,11 +93,14 @@ const List = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/desserts/${_id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await axios.delete(
+          `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         Swal.fire("Eliminado", "El postre ha sido eliminado.", "success");
         onDelete(_id);
@@ -118,7 +121,7 @@ const List = ({
   const handleEdit = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:3000/desserts/${_id}`,
+        `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -155,7 +158,7 @@ const List = ({
     if (result.isConfirmed) {
       try {
         const { data } = await axios.delete(
-          `http://localhost:3000/desserts/picture/${_id}`,
+          `${import.meta.env.VITE_SERVER_URL}/desserts/picture/${_id}`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -203,7 +206,7 @@ const List = ({
 
       try {
         await axios.patch(
-          `http://localhost:3000/desserts/picture/${_id}`,
+          `${import.meta.env.VITE_SERVER_URL}/desserts/picture/${_id}`,
           formData,
           {
             headers: {

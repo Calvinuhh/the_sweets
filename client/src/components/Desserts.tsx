@@ -13,12 +13,15 @@ const Desserts = () => {
       const typeQuery = selectedTypes.length > 0 ? selectedTypes.join(",") : "";
       const priceQuery = sortOrder ? sortOrder : "";
 
-      const response = await axios.get("http://localhost:3000/clients", {
-        params: {
-          type: typeQuery,
-          price: priceQuery,
-        },
-      });
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/clients`,
+        {
+          params: {
+            type: typeQuery,
+            price: priceQuery,
+          },
+        }
+      );
 
       setDesserts(response.data);
     } catch (error) {

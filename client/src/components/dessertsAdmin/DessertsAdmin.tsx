@@ -48,7 +48,7 @@ const DessertsAdmin = () => {
     dessertCategories.forEach(({ type }) => {
       setLoading((prev) => ({ ...prev, [type]: true }));
       axios
-        .get(`http://localhost:3000/desserts?type=${type}`, {
+        .get(`${import.meta.env.VITE_SERVER_URL}/desserts?type=${type}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -198,7 +198,7 @@ const DessertsAdmin = () => {
         }
 
         const response = await axios.patch(
-          `http://localhost:3000/desserts/${dessert._id}`,
+          `${import.meta.env.VITE_SERVER_URL}/desserts/${dessert._id}`,
           updatedFields,
           {
             headers: {
@@ -298,7 +298,7 @@ const DessertsAdmin = () => {
     if (formValues) {
       try {
         const response = await axios.post(
-          "http://localhost:3000/desserts",
+          `${import.meta.env.VITE_SERVER_URL}/desserts`,
           {
             name: formValues.name,
             price: formValues.price,

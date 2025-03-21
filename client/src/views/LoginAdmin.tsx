@@ -29,10 +29,13 @@ const LoginAdmin = () => {
     try {
       setIsLoading(true);
 
-      const { data } = await axios.post("http://localhost:3000/admin/login", {
-        username,
-        password,
-      });
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER_URL}/admin/login`,
+        {
+          username,
+          password,
+        }
+      );
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("tokenTimestamp", new Date().getTime().toString());
