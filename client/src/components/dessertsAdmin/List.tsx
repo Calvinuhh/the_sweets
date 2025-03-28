@@ -3,8 +3,10 @@ import {
   PencilIcon,
   TrashIcon,
   PhotoIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 type ListProps = {
   _id: string;
@@ -43,6 +45,8 @@ const List = ({
   onDeleteImage,
   onUploadImage,
 }: ListProps) => {
+  const navigate = useNavigate();
+
   const getAuthHeaders = () => ({
     Authorization: `Bearer ${localStorage.getItem("token")}`,
     "Content-Type": "application/json",
@@ -102,6 +106,10 @@ const List = ({
         confirmButtonText: "Cerrar",
       });
     }
+  };
+
+  const handleAddAdditions = () => {
+    navigate(`/admin/${_id}`);
   };
 
   const handleDelete = async () => {
@@ -268,6 +276,14 @@ const List = ({
       <td className="p-3">${price}</td>
       <td className="p-3">{picture ? "Sí" : "No"}</td>
       <td className="p-3">{active ? "Sí" : "No"}</td>
+      <td className="p-3">
+        <button
+          onClick={handleAddAdditions}
+          className="text-purple-500 hover:text-purple-700 cursor-pointer"
+        >
+          <PlusCircleIcon className="w-5 h-5 mx-auto" />
+        </button>
+      </td>
       <td className="p-3 flex justify-center gap-3">
         <button
           onClick={handleView}

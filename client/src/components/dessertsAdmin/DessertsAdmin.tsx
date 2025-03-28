@@ -13,6 +13,7 @@ type DessertType = {
   flavor: string;
   levels: number;
   portions: number;
+  additions?: Array<string>;
 };
 
 type DessertCategory = {
@@ -74,7 +75,6 @@ const DessertsAdmin = () => {
 
         setDesserts(newDesserts);
       } catch (error) {
-        console.error("Error fetching desserts:", error);
         setError("Error al cargar los postres. Por favor, intenta nuevamente.");
       } finally {
         setIsLoading(false);
@@ -270,7 +270,6 @@ const DessertsAdmin = () => {
       try {
         const updatedFields: Partial<DessertType> = {};
 
-        // Solo actualizar los campos que cambiaron
         if (formValues.name !== dessert.name)
           updatedFields.name = formValues.name;
         if (formValues.price !== dessert.price)
@@ -481,6 +480,7 @@ const DessertsAdmin = () => {
                     <th className="p-3 border border-gray-300">Precio</th>
                     <th className="p-3 border border-gray-300">Imagen</th>
                     <th className="p-3 border border-gray-300">Activo</th>
+                    <th className="p-3 border border-gray-300">Adiciones</th>
                     <th className="p-3 border border-gray-300">Opciones</th>
                   </tr>
                 </thead>

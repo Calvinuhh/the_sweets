@@ -19,7 +19,7 @@ export const getDesserts = async (type?: string) => {
   if (!type) {
     const desserts = await Dessert.find().populate({
       path: "additions",
-      select: "name",
+      select: "name price",
     });
     if (desserts.length === 0) return "No hay postres disponibles";
     return desserts;
@@ -27,7 +27,7 @@ export const getDesserts = async (type?: string) => {
 
   const desserts = await Dessert.find({ type }).populate({
     path: "additions",
-    select: "name",
+    select: "name price",
   });
 
   if (desserts.length === 0) return `No se encontraron postres de tipo ${type}`;
@@ -38,7 +38,7 @@ export const getDesserts = async (type?: string) => {
 export const getDessertById = async (_id: string) => {
   const dessert = await Dessert.findById(_id).populate({
     path: "additions",
-    select: "name",
+    select: "name price",
   });
 
   if (!dessert) throw Error("Postre no encontrado");

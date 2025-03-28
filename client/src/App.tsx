@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import HomeLayout from "./layouts/HomeLayout";
 import About from "./components/About";
 import AdminResources from "./views/AdminResources";
+import UpdateAdditions from "./components/dessertsAdmin/UpdateAdditions";
 import LoginAdmin from "./views/LoginAdmin";
 import ContactUs from "./components/ContactUs";
 import Desserts from "./components/Desserts";
@@ -21,6 +22,7 @@ function App() {
           element={<LoginAdmin />}
         />
         <Route path="/admin" element={<AdminResources />} />
+        <Route path="/admin/:id" element={<UpdateAdditions />} />
       </Routes>
     </>
   );

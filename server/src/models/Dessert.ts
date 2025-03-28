@@ -49,7 +49,6 @@ const dessertSchema = new Schema<Dessert>(
       {
         type: Schema.Types.ObjectId,
         ref: "addition",
-        unique: true,
       },
     ],
   },
