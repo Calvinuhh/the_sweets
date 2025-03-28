@@ -18,7 +18,7 @@ export const login = async (data: AdminLogin) => {
     throw Error("Contraseña Incorrecta!");
 
   return sign({ _id: admin._id }, JWT_SECRET, {
-    expiresIn: "30m",
+    expiresIn: "1h",
   });
 };
 

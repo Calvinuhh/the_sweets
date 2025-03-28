@@ -21,17 +21,22 @@ export const validateDessertTypes = (type: string) => {
     );
 };
 
-export const validateFlavor = (flavor: string) => {
+export const validateFlavorTypes = (flavor: string) => {
   if (flavor !== "chocolate" && flavor !== "vainilla" && flavor !== "caramelo")
     throw Error(
       "Los sabores permitidos son: 'chocolate', 'vainilla' y 'caramelo'"
     );
 };
 
-export const validateFlavorTypes = (flavor: string) => {
-  if (flavor !== "chocolate" && flavor !== "vainilla" && flavor !== "caramelo")
+export const validateAdditionTypes = (type: string) => {
+  if (
+    type !== "relleno" &&
+    type !== "decoracion" &&
+    type !== "cobertura" &&
+    type !== "topping"
+  )
     throw Error(
-      "Los sabores permitidos son: 'chocolate', 'vainilla' y 'caramelo'"
+      "Los tipos de adición permitidos son: 'relleno', 'decoracion', 'cobertura' y 'topping'"
     );
 };
 

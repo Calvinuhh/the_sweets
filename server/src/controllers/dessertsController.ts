@@ -7,6 +7,7 @@ import {
   getDessertById,
   addPicture,
   deleteImageDessert,
+  addAddition,
 } from "../services/dessertServices";
 import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
 
@@ -82,7 +83,9 @@ export const updateDessertsController = async (req: Request, res: Response) => {
 export const deleteDessertsController = async (req: Request, res: Response) => {
   try {
     const { _id } = req.params;
+
     await deleteDessert(_id);
+
     res.status(204).json("Postre Eliminado");
   } catch (error) {
     const err = error as Error;
@@ -90,6 +93,7 @@ export const deleteDessertsController = async (req: Request, res: Response) => {
   }
 };
 
+//PICTURES
 export const addPictureDessertController = async (
   req: Request,
   res: Response
@@ -119,6 +123,20 @@ export const deleteImageDessertController = async (
     const { _id } = req.params;
 
     res.status(200).json(await deleteImageDessert(_id));
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json(err.message);
+  }
+};
+
+//ADDITIONS
+export const addAdditionsController = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.params;
+    const { additions } = req.body;
+
+    await addAddition(_id, additions);
+    res.status(200).json("Adiciones agregadas correctamente");
   } catch (error) {
     const err = error as Error;
     res.status(400).json(err.message);

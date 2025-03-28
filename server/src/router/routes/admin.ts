@@ -3,7 +3,7 @@ import {
   changePasswordController,
   loginController,
 } from "../../controllers/adminController";
-import { validateNewPassword } from "../../middlewares/inputValidations";
+import { validateNewPassword } from "../../middlewares/patchValidations";
 
 process.loadEnvFile();
 const { TOKEN } = process.env as { TOKEN: string };

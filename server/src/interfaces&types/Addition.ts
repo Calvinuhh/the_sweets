@@ -7,5 +7,7 @@ export default interface Addition {
   name: string;
   price: number;
   type: AdditionType;
-  active: boolean;
 }
+
+export type CreateAddition = Pick<Addition, "name" | "price" | "type">;
+export type UpdateAddition = Partial<CreateAddition>;

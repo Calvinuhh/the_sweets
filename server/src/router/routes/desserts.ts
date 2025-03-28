@@ -7,14 +7,13 @@ import {
   updateDessertsController,
   deleteImageDessertController,
   addPictureDessertController,
+  addAdditionsController,
 } from "../../controllers/dessertsController";
 import upload from "../../multer/multer";
 import { adminAuthorization } from "../../middlewares/adminAuthorization";
 import { validateObjectId } from "../../middlewares/paramsValidations";
-import {
-  newDessertMiddleware,
-  patchDessertMiddleware,
-} from "../../middlewares/inputValidations";
+import { newDessertMiddleware } from "../../middlewares/inputValidations";
+import { patchDessertMiddleware } from "../../middlewares/patchValidations";
 
 const dessertsRouter: Router = Router();
 
@@ -36,6 +35,6 @@ dessertsRouter.patch(
 dessertsRouter.delete("/picture/:_id", deleteImageDessertController);
 
 //Additions
-
+dessertsRouter.patch("/:_id/additions", addAdditionsController);
 
 export default dessertsRouter;

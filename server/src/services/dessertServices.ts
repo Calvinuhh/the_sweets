@@ -1,7 +1,9 @@
 import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
 import Dessert from "../models/Dessert";
+import Addition from "../models/Addition";
 import path from "path";
 import fs from "fs";
+import { ObjectId } from "mongoose";
 
 export const createDessert = async (data: CreateDessert) => {
   const { name, price, type, flavor } = data;
@@ -15,12 +17,18 @@ export const createDessert = async (data: CreateDessert) => {
 
 export const getDesserts = async (type?: string) => {
   if (!type) {
-    const desserts = await Dessert.find();
+    const desserts = await Dessert.find().populate({
+      path: "additions",
+      select: "name",
+    });
     if (desserts.length === 0) return "No hay postres disponibles";
     return desserts;
   }
 
-  const desserts = await Dessert.find({ type });
+  const desserts = await Dessert.find({ type }).populate({
+    path: "additions",
+    select: "name",
+  });
 
   if (desserts.length === 0) return `No se encontraron postres de tipo ${type}`;
 
@@ -28,7 +36,10 @@ export const getDesserts = async (type?: string) => {
 };
 
 export const getDessertById = async (_id: string) => {
-  const dessert = await Dessert.findById(_id);
+  const dessert = await Dessert.findById(_id).populate({
+    path: "additions",
+    select: "name",
+  });
 
   if (!dessert) throw Error("Postre no encontrado");
 
@@ -78,7 +89,7 @@ export const deleteDessert = async (_id: string) => {
   await Dessert.findByIdAndDelete(_id);
 };
 
-//IMAGES
+//PICTURES
 export const addPicture = async (_id: string, picturePath: string) => {
   const dessert = await Dessert.findById(_id);
 
@@ -114,4 +125,20 @@ export const deleteImageDessert = async (_id: string) => {
   }
 
   return await Dessert.findByIdAndUpdate(_id, { picture: null }, { new: true });
+};
+
+//ADDITIONS
+export const addAddition = async (_id: string, additions: Array<ObjectId>) => {
+  const dessert = await Dessert.findById(_id);
+
+  if (!dessert) throw Error("Postre no encontrado");
+
+  const existingAdditions = await Addition.find({ _id: { $in: additions } });
+  if (existingAdditions.length !== additions.length) {
+    throw Error("Alguna de las adiciones no existe");
+  }
+
+  dessert.additions = additions;
+
+  return await dessert.save();
 };
