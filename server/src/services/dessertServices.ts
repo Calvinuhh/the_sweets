@@ -4,26 +4,25 @@ import path from "path";
 import fs from "fs";
 
 export const createDessert = async (data: CreateDessert) => {
-  const { name, price, type } = data;
+  const { name, price, type, flavor } = data;
 
   const dessertName = await Dessert.findOne({ name });
 
   if (dessertName) throw Error("Ya existe un postre con ese nombre");
 
-  return await Dessert.create({ name, price, type });
+  return await Dessert.create({ name, price, type, flavor });
 };
 
 export const getDesserts = async (type?: string) => {
   if (!type) {
     const desserts = await Dessert.find();
-    if (desserts.length === 0) throw Error("No hay postres disponibles");
+    if (desserts.length === 0) return "No hay postres disponibles";
     return desserts;
   }
 
   const desserts = await Dessert.find({ type });
 
-  if (desserts.length === 0)
-    throw Error(`No se encontraron postres de tipo ${type}`);
+  if (desserts.length === 0) return `No se encontraron postres de tipo ${type}`;
 
   return desserts;
 };
@@ -37,7 +36,7 @@ export const getDessertById = async (_id: string) => {
 };
 
 export const updateDessert = async (_id: string, data: UpdateDessert) => {
-  const { name, price, type, active } = data;
+  const { name, price, type, active, flavor, levels, portions } = data;
 
   const dessert = await Dessert.findById(_id);
   if (!dessert) throw Error("Postre no encontrado");
@@ -54,6 +53,9 @@ export const updateDessert = async (_id: string, data: UpdateDessert) => {
   if (price) updateObject.price = price;
   if (type) updateObject.type = type;
   if (active !== undefined) updateObject.active = active;
+  if (levels) updateObject.levels = levels;
+  if (portions) updateObject.portions = portions;
+  if (flavor) updateObject.flavor = flavor;
 
   return await Dessert.findByIdAndUpdate(_id, updateObject, { new: true });
 };
@@ -76,6 +78,7 @@ export const deleteDessert = async (_id: string) => {
   await Dessert.findByIdAndDelete(_id);
 };
 
+//IMAGES
 export const addPicture = async (_id: string, picturePath: string) => {
   const dessert = await Dessert.findById(_id);
 

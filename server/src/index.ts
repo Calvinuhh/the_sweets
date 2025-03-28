@@ -9,9 +9,7 @@ const { PORT } = process.env;
 DBConnection()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(
-        `Servidor escuchando en el puerto: ${PORT}, node version: ${process.version}`
-      );
+      console.log(`Servidor escuchando en el puerto: ${PORT}`);
     });
 
     createAdmin();

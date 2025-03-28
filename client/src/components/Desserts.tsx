@@ -1,31 +1,51 @@
 import { useEffect, useState } from "react";
 import SideBar from "./SideBar";
 import Cards from "./Cards";
-import axios from "axios";
+
+interface Dessert {
+  _id: string;
+  name: string;
+  price: number;
+  picture: string | null;
+  type: string;
+  active: boolean;
+}
 
 const Desserts = () => {
-  const [desserts, setDesserts] = useState([]);
+  const [desserts, setDesserts] = useState<Dessert[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<"ASC" | "DESC" | "">("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchDesserts = async () => {
+    setIsLoading(true);
     try {
-      const typeQuery = selectedTypes.length > 0 ? selectedTypes.join(",") : "";
-      const priceQuery = sortOrder ? sortOrder : "";
+      const params = new URLSearchParams();
+      if (selectedTypes.length > 0)
+        params.append("type", selectedTypes.join(","));
+      if (sortOrder) params.append("price", sortOrder);
 
-      const response = await axios.get(
-        `${import.meta.env.VITE_SERVER_URL}/clients`,
-        {
-          params: {
-            type: typeQuery,
-            price: priceQuery,
-          },
-        }
-      );
+      const url = `${
+        import.meta.env.VITE_SERVER_URL
+      }/clients?${params.toString()}`;
 
-      setDesserts(response.data);
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setDesserts(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error fetching desserts:", error);
+      setDesserts([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,7 +61,7 @@ const Desserts = () => {
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
       />
-      <Cards desserts={desserts} />
+      <Cards desserts={desserts} isLoading={isLoading} />
     </div>
   );
 };

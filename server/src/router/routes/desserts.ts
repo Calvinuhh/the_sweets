@@ -27,12 +27,15 @@ dessertsRouter.get("/:_id", getDessertByIdController);
 dessertsRouter.patch("/:_id", patchDessertMiddleware, updateDessertsController);
 dessertsRouter.delete("/:_id", deleteDessertsController);
 
-//Picture
+//Pictures
 dessertsRouter.patch(
   "/picture/:_id",
   upload.single("picture"),
   addPictureDessertController
 );
 dessertsRouter.delete("/picture/:_id", deleteImageDessertController);
+
+//Additions
+
 
 export default dessertsRouter;

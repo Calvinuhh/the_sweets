@@ -8,15 +8,17 @@ import {
   addPicture,
   deleteImageDessert,
 } from "../services/dessertServices";
+import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
 
 export const createDessertController = async (req: Request, res: Response) => {
   try {
-    const { name, price, type } = req.body;
+    const { name, price, type, flavor }: CreateDessert = req.body;
 
     const newDessert = await createDessert({
       name,
       price,
       type,
+      flavor,
     });
 
     res.status(201).json(newDessert);
@@ -50,7 +52,15 @@ export const getDessertByIdController = async (req: Request, res: Response) => {
 
 export const updateDessertsController = async (req: Request, res: Response) => {
   try {
-    const { name, price, type, active } = req.body;
+    const {
+      name,
+      price,
+      type,
+      active,
+      flavor,
+      levels,
+      portions,
+    }: UpdateDessert = req.body;
     const { _id } = req.params;
 
     const updatedDessert = await updateDessert(_id, {
@@ -58,6 +68,9 @@ export const updateDessertsController = async (req: Request, res: Response) => {
       price,
       type,
       active,
+      flavor,
+      levels,
+      portions,
     });
     res.status(200).json(updatedDessert);
   } catch (error) {

@@ -21,7 +21,26 @@ export const validateDessertTypes = (type: string) => {
     );
 };
 
+export const validateFlavor = (flavor: string) => {
+  if (flavor !== "chocolate" && flavor !== "vainilla" && flavor !== "caramelo")
+    throw Error(
+      "Los sabores permitidos son: 'chocolate', 'vainilla' y 'caramelo'"
+    );
+};
+
+export const validateFlavorTypes = (flavor: string) => {
+  if (flavor !== "chocolate" && flavor !== "vainilla" && flavor !== "caramelo")
+    throw Error(
+      "Los sabores permitidos son: 'chocolate', 'vainilla' y 'caramelo'"
+    );
+};
+
 export const validateActive = (param: boolean) => {
   if (param !== true && param !== false)
     throw Error("El campo 'active' debe ser true o false");
+};
+
+export const validateMaxLength = (param: string, num: number, key: string) => {
+  if (param.length > num)
+    throw Error(`El campo ${key} debe ser menor que ${num}`);
 };

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
 import List from "./List";
@@ -11,6 +10,9 @@ type DessertType = {
   picture: string | null;
   type: string;
   active: boolean;
+  flavor: string;
+  levels: number;
+  portions: number;
 };
 
 type DessertCategory = {
@@ -31,45 +33,55 @@ const DessertsAdmin = () => {
     galleta: [],
     rollo: [],
   });
-  const [loading, setLoading] = useState<{ [key: string]: boolean }>({
-    torta: true,
-    postre_frio: true,
-    galleta: true,
-    rollo: true,
-  });
-  const [error, setError] = useState<{ [key: string]: string | null }>({
-    torta: null,
-    postre_frio: null,
-    galleta: null,
-    rollo: null,
-  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    dessertCategories.forEach(({ type }) => {
-      setLoading((prev) => ({ ...prev, [type]: true }));
-      axios
-        .get(`${import.meta.env.VITE_SERVER_URL}/desserts?type=${type}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then((res) => {
-          setDesserts((prev) => ({
-            ...prev,
-            [type]: res.data,
-          }));
-          setError((prev) => ({ ...prev, [type]: null }));
-        })
-        .catch((err: AxiosError | any) => {
-          setError((prev) => ({
-            ...prev,
-            [type]: err.response?.data,
-          }));
-        })
-        .finally(() => {
-          setLoading((prev) => ({ ...prev, [type]: false }));
+    const fetchDesserts = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem("token");
+        const headers = {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+
+        const promises = dessertCategories.map(({ type }) =>
+          fetch(`${import.meta.env.VITE_SERVER_URL}/desserts?type=${type}`, {
+            headers,
+          }).then(async (response) => {
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+          })
+        );
+
+        const results = await Promise.all(promises);
+
+        const newDesserts: DessertCategory = {
+          torta: [],
+          postre_frio: [],
+          galleta: [],
+          rollo: [],
+        };
+
+        results.forEach((data, index) => {
+          const type = dessertCategories[index].type;
+          newDesserts[type] = Array.isArray(data) ? data : [];
         });
-    });
+
+        setDesserts(newDesserts);
+      } catch (error) {
+        console.error("Error fetching desserts:", error);
+        setError("Error al cargar los postres. Por favor, intenta nuevamente.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDesserts();
   }, []);
 
   const handleDelete = (id: string) => {
@@ -94,37 +106,77 @@ const DessertsAdmin = () => {
       return updatedDesserts;
     });
   };
-
   const handleEdit = async (dessert: DessertType) => {
     const { value: formValues } = await Swal.fire({
       title: "Editar Postre",
       html: `
-        <input id="swal-name" class="swal2-input" placeholder="Nombre" value="${
-          dessert.name
-        }">
-        <input id="swal-price" type="number" class="swal2-input" placeholder="Precio" value="${
-          dessert.price
-        }">
-        <select id="swal-type" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
-          ${dessertCategories
-            .map(
-              (cat) =>
-                `<option value="${cat.type}" ${
-                  cat.type === dessert.type ? "selected" : ""
-                }>${cat.label}</option>`
-            )
-            .join("")}
-        </select>
-        <div style="display: flex; flex-direction: column; width: 60%; align-items: center; margin: 0 auto; margin-top: 30px;">
-          <label for="swal-active" style="border: 1px solid #ccc; padding: 5px; border-radius: 4px; align-self: flex-start;">Activo:</label>
-          <select id="swal-active" class="swal2-select" style="width: 100%; border: 1px solid lightgray; border-radius: 5px; margin-bottom: 20px;">
-            <option value="true" ${dessert.active ? "selected" : ""}>Sí</option>
-            <option value="false" ${
-              !dessert.active ? "selected" : ""
-            }>No</option>
-          </select>
-        </div>
-      `,
+  <div style="margin-bottom: 15px;">
+    <label for="swal-name" style="display: block; margin-bottom: 5px; font-weight: bold;">Nombre:</label>
+    <input id="swal-name" class="swal2-input" placeholder="Nombre del postre" value="${
+      dessert.name
+    }">
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-price" style="display: block; margin-bottom: 5px; font-weight: bold;">Precio ($):</label>
+    <input id="swal-price" type="number" class="swal2-input" placeholder="Precio en pesos" value="${
+      dessert.price
+    }">
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-portions" style="display: block; margin-bottom: 5px; font-weight: bold;">Número de Porciones:</label>
+    <input id="swal-portions" type="number" class="swal2-input" placeholder="Cantidad de porciones" value="${
+      dessert.portions
+    }" min="1">
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-levels" style="display: block; margin-bottom: 5px; font-weight: bold;">Número de Niveles:</label>
+    <input id="swal-levels" type="number" class="swal2-input" placeholder="Cantidad de niveles" value="${
+      dessert.levels
+    }" min="1">
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-flavor" style="display: block; margin-bottom: 5px; font-weight: bold;">Sabor:</label>
+    <select id="swal-flavor" class="swal2-select" style="width: 260px; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
+      <option value="chocolate" ${
+        dessert.flavor === "chocolate" ? "selected" : ""
+      }>Chocolate</option>
+      <option value="vainilla" ${
+        dessert.flavor === "vainilla" ? "selected" : ""
+      }>Vainilla</option>
+      <option value="caramelo" ${
+        dessert.flavor === "caramelo" ? "selected" : ""
+      }>Caramelo</option>
+    </select>
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-type" style="display: block; margin-bottom: 5px; font-weight: bold;">Tipo de Postre:</label>
+    <select id="swal-type" class="swal2-select" style="width: 260px; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
+      ${dessertCategories
+        .map(
+          (cat) =>
+            `<option value="${cat.type}" ${
+              cat.type === dessert.type ? "selected" : ""
+            }>${cat.label}</option>`
+        )
+        .join("")}
+    </select>
+  </div>
+  
+  <div style="margin-bottom: 15px;">
+    <label for="swal-active" style="display: block; margin-bottom: 5px; font-weight: bold;">Estado:</label>
+    <select id="swal-active" class="swal2-select" style="width:260px; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
+      <option value="true" ${dessert.active ? "selected" : ""}>Activo</option>
+      <option value="false" ${
+        !dessert.active ? "selected" : ""
+      }>Inactivo</option>
+    </select>
+  </div>
+`,
       focusConfirm: false,
       preConfirm: () => {
         const name = (
@@ -133,6 +185,15 @@ const DessertsAdmin = () => {
         const price = (
           document.getElementById("swal-price") as HTMLInputElement
         )?.value.trim();
+        const portions = Number(
+          (document.getElementById("swal-portions") as HTMLInputElement)?.value
+        );
+        const levels = Number(
+          (document.getElementById("swal-levels") as HTMLInputElement)?.value
+        );
+        const flavor = (
+          document.getElementById("swal-flavor") as HTMLSelectElement
+        )?.value;
         const type = (document.getElementById("swal-type") as HTMLSelectElement)
           ?.value;
         const active =
@@ -156,6 +217,20 @@ const DessertsAdmin = () => {
           return null;
         }
 
+        if (isNaN(portions) || portions < 1) {
+          Swal.showValidationMessage(
+            "Las porciones deben ser un número mayor o igual a 1."
+          );
+          return null;
+        }
+
+        if (isNaN(levels) || levels < 1) {
+          Swal.showValidationMessage(
+            "Los niveles deben ser un número mayor o igual a 1."
+          );
+          return null;
+        }
+
         const existingDessert = Object.values(desserts)
           .flat()
           .find((d) => d.name === name && d._id !== dessert._id);
@@ -168,15 +243,26 @@ const DessertsAdmin = () => {
         const hasChanges =
           name !== dessert.name ||
           priceNumber !== dessert.price ||
+          portions !== dessert.portions ||
+          levels !== dessert.levels ||
           type !== dessert.type ||
-          active !== dessert.active;
+          active !== dessert.active ||
+          flavor !== dessert.flavor;
 
         if (!hasChanges) {
           Swal.showValidationMessage("No se realizaron cambios.");
           return null;
         }
 
-        return { name, price: priceNumber, type, active };
+        return {
+          name,
+          price: priceNumber,
+          portions,
+          levels,
+          type,
+          active,
+          flavor,
+        };
       },
     });
 
@@ -184,50 +270,52 @@ const DessertsAdmin = () => {
       try {
         const updatedFields: Partial<DessertType> = {};
 
-        if (formValues.name !== dessert.name) {
+        // Solo actualizar los campos que cambiaron
+        if (formValues.name !== dessert.name)
           updatedFields.name = formValues.name;
-        }
-        if (formValues.price !== dessert.price) {
+        if (formValues.price !== dessert.price)
           updatedFields.price = formValues.price;
-        }
-        if (formValues.type !== dessert.type) {
+        if (formValues.portions !== dessert.portions)
+          updatedFields.portions = formValues.portions;
+        if (formValues.levels !== dessert.levels)
+          updatedFields.levels = formValues.levels;
+        if (formValues.type !== dessert.type)
           updatedFields.type = formValues.type;
-        }
-        if (formValues.active !== dessert.active) {
+        if (formValues.active !== dessert.active)
           updatedFields.active = formValues.active;
-        }
+        if (formValues.flavor !== dessert.flavor)
+          updatedFields.flavor = formValues.flavor;
 
-        const response = await axios.patch(
+        const token = localStorage.getItem("token");
+        const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/desserts/${dessert._id}`,
-          updatedFields,
           {
+            method: "PATCH",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
+            body: JSON.stringify(updatedFields),
           }
         );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw Error(errorData);
+        }
+
+        const updatedDessert = await response.json();
 
         setDesserts((prev) => ({
           ...prev,
           [dessert.type]: prev[dessert.type].map((d) =>
-            d._id === dessert._id ? response.data : d
+            d._id === dessert._id ? updatedDessert : d
           ),
         }));
 
         Swal.fire("Éxito", "Postre actualizado correctamente", "success");
       } catch (error: any) {
-        let errorMessage = "Ocurrió un error al actualizar el postre.";
-
-        if (error.response) {
-          errorMessage = error.response.data.message || error.response.data;
-        } else if (error.request) {
-          errorMessage = "No se recibió respuesta del servidor.";
-        } else {
-          errorMessage = error.message;
-        }
-
-        Swal.fire("Error", errorMessage, "error");
+        Swal.fire("Error", error.message, "error");
       }
     }
   };
@@ -238,7 +326,13 @@ const DessertsAdmin = () => {
       html: `
         <input id="swal-name" class="swal2-input" placeholder="Nombre">
         <input id="swal-price" type="number" class="swal2-input" placeholder="Precio">
-        <select id="swal-type" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px;">
+        <select id="swal-flavor" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-top: 10px;">
+          <option value="" disabled selected>Selecciona un sabor</option>
+          <option value="chocolate">Chocolate</option>
+          <option value="vainilla">Vainilla</option>
+          <option value="caramelo">Caramelo</option>
+        </select>
+        <select id="swal-type" class="swal2-select" style="width: 58%; border: 1px solid lightgray; border-radius: 5px; padding: 5px; margin-top: 10px;">
           <option value="" disabled selected>Selecciona el tipo de postre</option>
           ${dessertCategories
             .map((cat) => `<option value="${cat.type}">${cat.label}</option>`)
@@ -253,12 +347,15 @@ const DessertsAdmin = () => {
         const price = (
           document.getElementById("swal-price") as HTMLInputElement
         )?.value.trim();
+        const flavor = (
+          document.getElementById("swal-flavor") as HTMLSelectElement
+        )?.value;
         const type = (document.getElementById("swal-type") as HTMLSelectElement)
           ?.value;
 
         const nameRegex = /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/;
 
-        if (!name || !price || !type) {
+        if (!name || !price || !type || !flavor) {
           Swal.showValidationMessage("Todos los campos son obligatorios");
           return false;
         }
@@ -291,45 +388,45 @@ const DessertsAdmin = () => {
           return false;
         }
 
-        return { name, price: priceNumber, type };
+        return { name, price: priceNumber, type, flavor };
       },
     });
 
     if (formValues) {
       try {
-        const response = await axios.post(
+        const token = localStorage.getItem("token");
+        const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/desserts`,
           {
-            name: formValues.name,
-            price: formValues.price,
-            type: formValues.type,
-          },
-          {
+            method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
+            body: JSON.stringify({
+              name: formValues.name,
+              price: formValues.price,
+              type: formValues.type,
+              flavor: formValues.flavor,
+            }),
           }
         );
 
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw Error(errorData);
+        }
+
+        const newDessert = await response.json();
+
         setDesserts((prev) => ({
           ...prev,
-          [formValues.type]: [...prev[formValues.type], response.data],
+          [formValues.type]: [...prev[formValues.type], newDessert],
         }));
 
         Swal.fire("Éxito", "Postre agregado correctamente", "success");
       } catch (error: any) {
-        let errorMessage = "Ocurrió un error al agregar el postre.";
-
-        if (error.response) {
-          errorMessage = error.response.data.message || error.response.data;
-        } else if (error.request) {
-          errorMessage = "No se recibió respuesta del servidor.";
-        } else {
-          errorMessage = error.message;
-        }
-
-        Swal.fire("Error", errorMessage, "error");
+        Swal.fire("Error", error.message, "error");
       }
     }
   };
@@ -343,6 +440,18 @@ const DessertsAdmin = () => {
     }));
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="p-4 text-center text-red-500">{error}</div>;
+  }
+
   return (
     <div className="p-4 font-lato">
       <div className="flex justify-center items-center gap-10 mb-[100px] mt-10">
@@ -355,19 +464,15 @@ const DessertsAdmin = () => {
         </button>
       </div>
 
-      {dessertCategories.map(({ type, label }) => (
-        <div key={type} className="mb-[100px]">
-          <h3 className="text-lg font-semibold mb-[50px] text-center">
-            {label}
-          </h3>
+      {dessertCategories.map(({ type, label }) => {
+        if (desserts[type].length === 0) return null;
 
-          {loading[type] ? (
-            <p className="text-center text-gray-500">
-              Cargando {label.toLowerCase()}...
-            </p>
-          ) : error[type] ? (
-            <p className="text-center text-red-500">{error[type]}</p>
-          ) : desserts[type].length > 0 ? (
+        return (
+          <div key={type} className="mb-[100px]">
+            <h3 className="text-lg font-semibold mb-[50px] text-center">
+              {label}
+            </h3>
+
             <div className="overflow-x-auto">
               <table className="w-full max-w-3xl mx-auto border-collapse border border-gray-300">
                 <thead>
@@ -397,13 +502,9 @@ const DessertsAdmin = () => {
                 </tbody>
               </table>
             </div>
-          ) : (
-            <p className="text-center text-gray-500">
-              No hay {label.toLowerCase()} disponibles.
-            </p>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };

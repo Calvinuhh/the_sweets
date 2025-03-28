@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AdminNav from "../components/AdminNav";
 import DessertsAdmin from "../components/dessertsAdmin/DessertsAdmin";
 import OrdersAdmin from "../components/ordersAdmin/OrdersAdmin";
+import AdditionsAdmin from "../components/additionsAdmin/AdditionsAdmin";
 import { useNavigate } from "react-router-dom";
 
 const AdminResources = () => {
@@ -26,10 +27,23 @@ const AdminResources = () => {
     }
   }, [navigate]);
 
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case "postres":
+        return <DessertsAdmin />;
+      case "adiciones":
+        return <AdditionsAdmin />;
+      case "ordenes":
+        return <OrdersAdmin />;
+      default:
+        return <DessertsAdmin />;
+    }
+  };
+
   return (
     <>
       <AdminNav activeTab={activeTab} setActiveTab={setActiveTab} />
-      {activeTab === "postres" ? <DessertsAdmin /> : <OrdersAdmin />}
+      {renderActiveTab()}
     </>
   );
 };

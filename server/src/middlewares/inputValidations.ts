@@ -4,7 +4,10 @@ import {
   validatePrice,
   validateDessertTypes,
   validateActive,
+  validateMaxLength,
+  validateFlavor,
 } from "../utils/inputValidations";
+import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
 
 export const newDessertMiddleware = (
   req: Request,
@@ -12,15 +15,18 @@ export const newDessertMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const { name, price, type } = req.body;
+    const { name, price, type, flavor }: CreateDessert = req.body;
 
     if (!name) throw Error("El campo 'name' es requerido");
     if (!price) throw Error("El campo 'price' es requerido");
     if (!type) throw Error("El campo 'type' es requerido");
+    if (!flavor) throw Error("El campo 'flavor' es requerido");
 
     validateName(name);
+    validateMaxLength(name, 100, "name");
     validatePrice(price);
     validateDessertTypes(type);
+    validateFlavor(flavor);
 
     next();
   } catch (error) {
@@ -35,7 +41,15 @@ export const patchDessertMiddleware = (
   next: NextFunction
 ) => {
   try {
-    const { name, price, type, active } = req.body;
+    const {
+      name,
+      price,
+      type,
+      active,
+      flavor,
+      levels,
+      portions,
+    }: UpdateDessert = req.body;
 
     for (const key in req.body) {
       if (key !== "active" && !req.body[key]) {
@@ -47,6 +61,17 @@ export const patchDessertMiddleware = (
     if (price) validatePrice(price);
     if (type) validateDessertTypes(type);
     if (active !== undefined) validateActive(active);
+    if (flavor) validateFlavor(flavor);
+    if (levels) {
+      if (typeof levels !== "number")
+        throw Error("El campo 'levels' debe ser un número");
+      if (levels < 1) throw Error("El campo 'levels' debe ser mayor a 0");
+    }
+    if (portions) {
+      if (typeof portions !== "number")
+        throw Error("El campo 'portions' debe ser un número");
+      if (portions < 1) throw Error("El campo 'portions' debe ser mayor a 0");
+    }
 
     next();
   } catch (error) {

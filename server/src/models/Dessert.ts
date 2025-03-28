@@ -9,6 +9,7 @@ const dessertSchema = new Schema<Dessert>(
       required: true,
       unique: true,
       match: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/,
+      maxlength: 100,
     },
     price: {
       type: Number,
@@ -19,8 +20,23 @@ const dessertSchema = new Schema<Dessert>(
       type: String,
       trim: true,
     },
+    portions: {
+      type: Number,
+      default: 1,
+    },
+    levels: {
+      type: Number,
+      default: 1,
+    },
+    flavor: {
+      type: String,
+      trim: true,
+      required: true,
+      enum: ["chocolate", "vainilla", "caramelo"],
+    },
     type: {
       type: String,
+      trim: true,
       required: true,
       enum: ["torta", "postre_frio", "rollo", "galleta"],
     },
@@ -29,6 +45,12 @@ const dessertSchema = new Schema<Dessert>(
       default: false,
       required: true,
     },
+    additions: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "addition",
+      },
+    ],
   },
   { versionKey: false }
 );

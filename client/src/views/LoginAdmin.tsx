@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios, { AxiosError } from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
@@ -29,13 +28,26 @@ const LoginAdmin = () => {
     try {
       setIsLoading(true);
 
-      const { data } = await axios.post(
+      const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/admin/login`,
         {
-          username,
-          password,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+          }),
         }
       );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error);
+      }
+
+      const data = await response.json();
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("tokenTimestamp", new Date().getTime().toString());
@@ -47,11 +59,11 @@ const LoginAdmin = () => {
         confirmButtonText: "Aceptar",
       });
       navigate("/admin");
-    } catch (error: AxiosError | any) {
+    } catch (error: any) {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: String((error as AxiosError).response?.data),
+        text: error.message,
       });
     } finally {
       setIsLoading(false);

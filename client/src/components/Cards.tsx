@@ -9,9 +9,26 @@ interface Dessert {
 
 interface CardsProps {
   desserts: Dessert[];
+  isLoading?: boolean;
 }
 
-const Cards = ({ desserts }: CardsProps) => {
+const Cards = ({ desserts, isLoading = false }: CardsProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64 w-full">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (!Array.isArray(desserts) || desserts.length === 0) {
+    return (
+      <div className="p-4 text-gray-600 w-full text-center">
+        No hay postres disponibles.
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-wrap gap-6 p-4">
       {desserts.map((dessert) => (

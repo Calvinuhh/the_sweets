@@ -5,7 +5,6 @@ import {
   PhotoIcon,
 } from "@heroicons/react/24/solid";
 import Swal from "sweetalert2";
-import axios from "axios";
 
 type ListProps = {
   _id: string;
@@ -21,9 +20,16 @@ type ListProps = {
     picture: string | null;
     type: string;
     active: boolean;
+    flavor: string;
+    levels: number;
+    portions: number;
   }) => void;
   onDeleteImage: (id: string, type: string) => void;
   onUploadImage: (id: string) => void;
+};
+
+const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
 const List = ({
@@ -37,24 +43,45 @@ const List = ({
   onDeleteImage,
   onUploadImage,
 }: ListProps) => {
+  const getAuthHeaders = () => ({
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    "Content-Type": "application/json",
+  });
+
   const handleView = async () => {
     try {
-      const { data } = await axios.get(
+      const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: getAuthHeaders(),
         }
       );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw Error(error);
+      }
+
+      const data = await response.json();
 
       Swal.fire({
         title: "Detalles del Postre",
         html: `
-          <p><strong>Nombre:</strong> ${data.name}</p>
-          <p><strong>Precio:</strong> $${data.price}</p>
-          <p><strong>Tipo:</strong> ${data.type}</p>
-          <p><strong>Activo:</strong> ${data.active ? "Sí" : "No"}</p>
+          <div style="text-align: center;">
+            <p><strong>Nombre:</strong> ${data.name}</p>
+            <p><strong>Precio:</strong> $${data.price}</p>
+            <p><strong>Tipo:</strong> ${data.type}</p>
+            <p><strong>Sabor:</strong> ${capitalizeFirstLetter(data.flavor)}</p>
+            <p><strong>Niveles:</strong> ${data.levels} nivel${
+          data.levels !== 1 ? "es" : ""
+        }</p>
+            <p><strong>Porciones:</strong> ${data.portions} porción${
+          data.portions !== 1 ? "es" : ""
+        }</p>
+            <p><strong>Estado:</strong> ${
+              data.active ? "Activo" : "Inactivo"
+            }</p>
+          </div>
           <br/>
           ${
             data.picture
@@ -65,14 +92,12 @@ const List = ({
           }
         `,
         confirmButtonText: "Cerrar",
+        width: "600px",
       });
     } catch (error: any) {
       Swal.fire({
         title: "Error",
-        text:
-          error.response?.data ||
-          error.message ||
-          "No se pudo obtener la información del postre.",
+        text: error.message,
         icon: "error",
         confirmButtonText: "Cerrar",
       });
@@ -93,24 +118,25 @@ const List = ({
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(
+        const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            method: "DELETE",
+            headers: getAuthHeaders(),
           }
         );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error);
+        }
 
         Swal.fire("Eliminado", "El postre ha sido eliminado.", "success");
         onDelete(_id);
       } catch (error: any) {
         Swal.fire({
           title: "Error",
-          text:
-            error.response?.data ||
-            error.message ||
-            "No se pudo eliminar el postre.",
+          text: error.message,
           icon: "error",
           confirmButtonText: "Cerrar",
         });
@@ -120,23 +146,24 @@ const List = ({
 
   const handleEdit = async () => {
     try {
-      const { data } = await axios.get(
+      const response = await fetch(
         `${import.meta.env.VITE_SERVER_URL}/desserts/${_id}`,
         {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: getAuthHeaders(),
         }
       );
 
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error);
+      }
+
+      const data = await response.json();
       onEdit(data);
     } catch (error: any) {
       Swal.fire({
         title: "Error",
-        text:
-          error.response?.data ||
-          error.message ||
-          "No se pudo obtener la información del postre para editar.",
+        text: error.message,
         icon: "error",
         confirmButtonText: "Cerrar",
       });
@@ -157,29 +184,30 @@ const List = ({
 
     if (result.isConfirmed) {
       try {
-        const { data } = await axios.delete(
+        const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/desserts/picture/${_id}`,
           {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            method: "DELETE",
+            headers: getAuthHeaders(),
           }
         );
 
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error);
+        }
+
+        const data = await response.json();
         Swal.fire(
           "Éxito",
           "La imagen del postre ha sido eliminada.",
           "success"
         );
-
         onDeleteImage(_id, data.type);
       } catch (error: any) {
         Swal.fire({
           title: "Error",
-          text:
-            error.response?.data ||
-            error.message ||
-            "No se pudo eliminar la imagen del postre.",
+          text: error.message,
           icon: "error",
           confirmButtonText: "Cerrar",
         });
@@ -205,24 +233,28 @@ const List = ({
       formData.append("picture", file);
 
       try {
-        await axios.patch(
+        const response = await fetch(
           `${import.meta.env.VITE_SERVER_URL}/desserts/picture/${_id}`,
-          formData,
           {
+            method: "PATCH",
             headers: {
-              "Content-Type": "multipart/form-data",
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
+            body: formData,
           }
         );
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error);
+        }
 
         Swal.fire("Éxito", "Imagen subida correctamente", "success");
         onUploadImage(_id);
       } catch (error: any) {
         Swal.fire({
           title: "Error",
-          text:
-            error.response?.data || error.message || "Error al subir imagen",
+          text: error.message,
           icon: "error",
           confirmButtonText: "Cerrar",
         });
