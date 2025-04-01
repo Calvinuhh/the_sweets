@@ -23,7 +23,15 @@ export const getDesserts = async (price?: string, type?: string) => {
     }
   }
 
-  if (desserts.length === 0) return("No hay postres disponibles");
+  if (desserts.length === 0) return "No hay postres disponibles";
 
   return desserts;
+};
+
+export const getDessertById = async (_id: string) => {
+  const dessert = await Dessert.findById(_id);
+
+  if (!dessert) return "Postre no encontrado";
+
+  return dessert;
 };

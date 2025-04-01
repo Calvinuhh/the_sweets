@@ -1,5 +1,5 @@
 import app from "./app";
-import DBConnection from "./database/database";
+import DBConnection from "./config/database";
 import createAdmin from "./utils/createAdmin";
 import createImagesFolder from "./utils/createImagesFolder";
 

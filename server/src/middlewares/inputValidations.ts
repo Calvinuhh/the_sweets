@@ -6,7 +6,7 @@ import {
   validateMaxLength,
   validateFlavorTypes,
   validateAdditionTypes,
-} from "../utils/inputValidations";
+} from "../utils/validations";
 import { CreateDessert } from "../interfaces&types/Dessert";
 
 export const newDessertMiddleware = (

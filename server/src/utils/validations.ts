@@ -49,3 +49,13 @@ export const validateMaxLength = (param: string, num: number, key: string) => {
   if (param.length > num)
     throw Error(`El campo ${key} debe ser menor que ${num}`);
 };
+
+export const validateEmail = (email: string) => {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+    throw Error("El email no es válido");
+};
+
+export const validatePhone = (phone: string) => {
+  if (!/^\d{10}$/.test(phone))
+    throw Error("El teléfono debe contener 10 dígitos y debe ser un numero");
+};

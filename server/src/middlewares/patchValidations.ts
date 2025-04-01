@@ -7,7 +7,7 @@ import {
   validateMaxLength,
   validateFlavorTypes,
   validateAdditionTypes,
-} from "../utils/inputValidations";
+} from "../utils/validations";
 import { UpdateDessert } from "../interfaces&types/Dessert";
 
 export const validateNewPassword = (

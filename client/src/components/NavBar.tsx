@@ -12,7 +12,7 @@ const NavBar = () => {
 
   return (
     <nav
-      className="flex justify-center gap-[100px] w-screen mx-auto font-lato p-4 shadow-lg"
+      className="flex justify-center gap-[100px] w-screen mx-auto font-moon p-4 shadow-lg"
       style={{ backgroundColor: "#b58e63" }}
     >
       {menuItems.map(({ name, path }) => (
@@ -22,8 +22,8 @@ const NavBar = () => {
           className={`cursor-pointer px-6 py-2 text-lg font-semibold rounded-lg transition-all duration-300 
             ${
               location.pathname === path
-                ? "bg-white text-[#b58e63] shadow-md"
-                : "border-2 border-white text-white hover:bg-[#a37b55] hover:text-white"
+                ? "bg-white text-[#b58e63] text-[40px] shadow-md"
+                : "border-2 border-white text-[30px] text-white hover:bg-[#a37b55] hover:text-white"
             }`}
         >
           {name}

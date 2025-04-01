@@ -15,6 +15,7 @@ export default function UpdateAdditions() {
   const [availableAdditions, setAvailableAdditions] = useState<AdditionType[]>(
     []
   );
+  const [dessertName, setDessertName] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,6 +41,7 @@ export default function UpdateAdditions() {
         }
 
         const dessertData = await dessertResponse.json();
+        setDessertName(dessertData.name); // Guardar el nombre del postre
         setPostreAdditions(dessertData.additions || []);
 
         const additionsResponse = await fetch(
@@ -137,7 +139,7 @@ export default function UpdateAdditions() {
       <div className="max-w-6xl mx-auto bg-white rounded-lg shadow-md p-6 mt-[80px]">
         <div className="flex flex-col items-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            Adiciones del Postre
+            Adiciones de {dessertName && `"${dessertName}"`}
           </h2>
           <button
             onClick={() => navigate("/admin")}
@@ -164,7 +166,7 @@ export default function UpdateAdditions() {
                     </span>
                     <button
                       onClick={() => handleRemoveAddition(addition)}
-                      className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
+                      className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors cursor-pointer"
                       aria-label="Quitar adición"
                     >
                       <svg
@@ -206,7 +208,7 @@ export default function UpdateAdditions() {
                     </span>
                     <button
                       onClick={() => handleAddAddition(addition)}
-                      className="text-green-500 hover:text-green-700 p-1 rounded-full hover:bg-green-50 transition-colors"
+                      className="text-green-500 hover:text-green-700 p-1 rounded-full hover:bg-green-50 transition-colors cursor-pointer"
                       aria-label="Agregar adición"
                     >
                       <svg
