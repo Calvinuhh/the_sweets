@@ -3,6 +3,9 @@
 </template>
 
 <script lang="ts" setup>
+
+import LoginForm from "~/components/admin/LoginForm"
+
 definePageMeta({
   middleware: () => {
     if (import.meta.client) {
