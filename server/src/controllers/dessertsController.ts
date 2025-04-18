@@ -25,7 +25,7 @@ export const createDessertController = async (req: Request, res: Response) => {
     res.status(201).json(newDessert);
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -36,7 +36,7 @@ export const getDessertsController = async (req: Request, res: Response) => {
     res.status(200).json(await getDesserts(type));
   } catch (error) {
     const err = error as Error;
-    res.status(404).json(err.message);
+    res.status(404).json({ message: err.message });
   }
 };
 
@@ -47,7 +47,7 @@ export const getDessertByIdController = async (req: Request, res: Response) => {
     res.status(200).json(await getDessertById(_id));
   } catch (error) {
     const err = error as Error;
-    res.status(404).json(err.message);
+    res.status(404).json({ message: err.message });
   }
 };
 
@@ -76,7 +76,7 @@ export const updateDessertsController = async (req: Request, res: Response) => {
     res.status(200).json(updatedDessert);
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -89,7 +89,7 @@ export const deleteDessertsController = async (req: Request, res: Response) => {
     res.status(204).json("Postre Eliminado");
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -111,7 +111,7 @@ export const addPictureDessertController = async (
     res.status(200).json(updatedDessert);
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -125,7 +125,7 @@ export const deleteImageDessertController = async (
     res.status(200).json(await deleteImageDessert(_id));
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -139,6 +139,6 @@ export const addAdditionsController = async (req: Request, res: Response) => {
     res.status(200).json("Adiciones agregadas correctamente");
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
