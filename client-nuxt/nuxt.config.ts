@@ -1,7 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt"],
+  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "@nuxt/icon"],
+
   devServer: {
     port: 3001,
   },
@@ -14,5 +15,9 @@ export default defineNuxtConfig({
 
   imports: {
     autoImport: true,
+  },
+
+  devtools: {
+    enabled: true,
   },
 });

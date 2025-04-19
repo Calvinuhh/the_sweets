@@ -17,7 +17,7 @@ import { patchDessertMiddleware } from "../../middlewares/patchValidations";
 
 const dessertsRouter: Router = Router();
 
-// dessertsRouter.use(adminAuthorization);
+dessertsRouter.use(adminAuthorization);
 dessertsRouter.param("_id", validateObjectId);
 
 dessertsRouter.post("/", newDessertMiddleware, createDessertController);

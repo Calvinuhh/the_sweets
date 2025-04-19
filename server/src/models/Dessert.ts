@@ -49,11 +49,10 @@ const dessertSchema = new Schema<Dessert>(
       {
         type: Schema.Types.ObjectId,
         ref: "addition",
-        unique: true
       },
     ],
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: false }
 );
 
 export default model<Dessert>("dessert", dessertSchema);

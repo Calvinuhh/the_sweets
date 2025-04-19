@@ -5,6 +5,7 @@ export const useAdminStore = defineStore("admin", {
   state: () => ({
     token: null as string | null,
     message: null as string | null,
+    tokenExpiration: null as number | null,
   }),
 
   actions: {
@@ -25,7 +26,11 @@ export const useAdminStore = defineStore("admin", {
         this.token = res.token;
         this.message = res.message;
 
+        const expirationTime = new Date().getTime() + 3600000;
+        this.tokenExpiration = expirationTime;
+
         localStorage.setItem("token", res.token);
+        localStorage.setItem("tokenExpiration", expirationTime.toString());
 
         Swal.fire({
           icon: "success",
@@ -50,18 +55,41 @@ export const useAdminStore = defineStore("admin", {
     logout() {
       this.token = null;
       this.message = null;
+      this.tokenExpiration = null;
       localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiration");
       navigateTo("/admin/login");
     },
 
     loadFromLocalStorage() {
       if (import.meta.client) {
         const token = localStorage.getItem("token");
+        const expiration = localStorage.getItem("tokenExpiration");
 
-        if (token) {
-          this.token = token;
+        if (token && expiration) {
+          const currentTime = new Date().getTime();
+          const expirationTime = parseInt(expiration);
+
+          if (currentTime < expirationTime) {
+            this.token = token;
+            this.tokenExpiration = expirationTime;
+          } else {
+            this.logout();
+          }
         }
       }
+    },
+
+    checkTokenExpiration() {
+      if (this.token && this.tokenExpiration) {
+        const currentTime = new Date().getTime();
+        if (currentTime >= this.tokenExpiration) {
+          this.logout();
+          return false;
+        }
+        return true;
+      }
+      return false;
     },
   },
 });

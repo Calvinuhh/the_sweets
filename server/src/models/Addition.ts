@@ -23,6 +23,7 @@ const additionSchema = new Schema<Addition>(
   },
   {
     versionKey: false,
+    timestamps: false,
   }
 );
 
