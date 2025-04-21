@@ -97,10 +97,20 @@
                             Editar Postre
                         </NuxtLink>
 
-                        <button @click="handleUploadImage"
-                            class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <Icon name="heroicons:photo" class="h-5 w-5 mr-2" />
-                            Subir Imagen
+                        <input type="file" ref="fileInput" accept="image/jpeg, image/png, image/webp" class="hidden"
+                            @change="handleFileChange">
+                        <button @click="triggerFileInput" :disabled="isProcessing"
+                            class="inline-flex justify-center items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <Icon v-if="isProcessing" name="heroicons:arrow-path" class="h-5 w-5 mr-2 animate-spin" />
+                            <Icon v-else name="heroicons:photo" class="h-5 w-5 mr-2" />
+                            {{ isProcessing ? 'Procesando...' : (dessert.picture ? 'Cambiar Imagen' : 'Subir Imagen') }}
+                        </button>
+
+                        <button v-if="dessert.picture" @click="handleDeleteImage" :disabled="isProcessing"
+                            class="inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <Icon v-if="isProcessing" name="heroicons:arrow-path" class="h-5 w-5 mr-2 animate-spin" />
+                            <Icon v-else name="heroicons:trash" class="h-5 w-5 mr-2" />
+                            Eliminar Imagen
                         </button>
                     </div>
                 </div>
@@ -117,10 +127,12 @@ import Spinner from '~/components/ui/Spinner.vue';
 const route = useRoute();
 const dessertsStore = useDessertsStore();
 const alert = useAlert();
+const fileInput = ref<HTMLInputElement | null>(null);
 
 const loading = ref(true);
 const error = ref<string | null>(null);
 const imageError = ref(false);
+const isProcessing = ref(false);
 
 const dessert = computed<Dessert | null>(() => dessertsStore.currentDessert);
 
@@ -148,6 +160,67 @@ const reloadPage = () => {
     window.location.reload();
 };
 
+const triggerFileInput = () => {
+    fileInput.value?.click();
+};
+
+const handleFileChange = async (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file || !dessert.value?._id) return;
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+        alert.showError('Solo se permiten archivos de tipo JPG, PNG o WEBP');
+        return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+        alert.showError('La imagen no debe exceder los 2MB');
+        return;
+    }
+
+    try {
+        isProcessing.value = true;
+        const formData = new FormData();
+        formData.append('picture', file);
+
+        // Si ya tiene imagen, primero eliminarla
+        if (dessert.value.picture) {
+            await dessertsStore.deleteDessertImage(dessert.value._id);
+        }
+
+        // Subir la nueva imagen
+        await dessertsStore.uploadDessertImage(dessert.value._id, formData);
+        alert.showSuccess('Imagen actualizada correctamente');
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Error al actualizar la imagen';
+        alert.showError(errorMessage);
+    } finally {
+        isProcessing.value = false;
+        if (target) target.value = '';
+    }
+};
+
+const handleDeleteImage = async () => {
+    if (!dessert.value?._id || !dessert.value.picture) return;
+
+    try {
+        const confirm = window.confirm('¿Estás seguro de que deseas eliminar esta imagen?');
+        if (!confirm) return;
+
+        isProcessing.value = true;
+        await dessertsStore.deleteDessertImage(dessert.value._id);
+        alert.showSuccess('Imagen eliminada correctamente');
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Error al eliminar la imagen';
+        alert.showError(errorMessage);
+    } finally {
+        isProcessing.value = false;
+    }
+};
+
 onMounted(async () => {
     try {
         const dessertId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
@@ -166,9 +239,4 @@ onMounted(async () => {
 onUnmounted(() => {
     dessertsStore.clearCurrentDessert();
 });
-
-const handleUploadImage = () => {
-    if (!dessert.value?._id) return;
-    alert.showSuccess('Funcionalidad de subir imagen será implementada');
-};
 </script>

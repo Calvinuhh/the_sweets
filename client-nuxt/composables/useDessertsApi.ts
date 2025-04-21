@@ -1,4 +1,8 @@
-import type { Dessert, CreateDessert } from "~/interfaces/Dessert";
+import type {
+  Dessert,
+  CreateDessert,
+  UpdateDessert,
+} from "~/interfaces/Dessert";
 
 export const useDessertsApi = () => {
   const {
@@ -70,10 +74,63 @@ export const useDessertsApi = () => {
     }
   };
 
+  const updateDessert = async (
+    id: string,
+    data: Partial<Dessert>
+  ): Promise<Dessert> => {
+    const url = `${SERVER_URL}/desserts/${id}`;
+
+    try {
+      return await $fetch<Dessert>(url, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+      });
+    } catch (error: any) {
+      const serverMessage = error.data?.message || error.message;
+      throw new Error(serverMessage);
+    }
+  };
+
+  const uploadDessertImage = async (
+    dessertId: string,
+    formData: FormData
+  ): Promise<Dessert> => {
+    const url = `${SERVER_URL}/desserts/picture/${dessertId}`;
+
+    try {
+      return await $fetch<Dessert>(url, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: formData,
+      });
+    } catch (error: any) {
+      const serverMessage = error.data?.message || error.message;
+      throw new Error(serverMessage);
+    }
+  };
+
+  const deleteDessertImage = async (dessertId: string): Promise<void> => {
+    const url = `${SERVER_URL}/desserts/picture/${dessertId}`;
+
+    try {
+      await $fetch(url, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+    } catch (error: any) {
+      const serverMessage = error.data?.message || error.message;
+      throw new Error(serverMessage);
+    }
+  };
+
   return {
     fetchAllDesserts,
     createDessert,
     getDessertById,
     deleteDessert,
+    updateDessert,
+    uploadDessertImage,
+    deleteDessertImage,
   };
 };

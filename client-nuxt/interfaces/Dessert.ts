@@ -16,3 +16,6 @@ export interface Dessert {
 }
 
 export type CreateDessert = Pick<Dessert, "name" | "price" | "type" | "flavor">;
+export type UpdateDessert = Partial<
+  Omit<Dessert, "_id" | "picture" | "additions">
+>;

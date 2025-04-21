@@ -63,7 +63,8 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center">
                 <div v-if="dessert.picture" class="flex-shrink-0 h-10 w-10">
-                  <img class="h-10 w-10 rounded-full object-cover" :src="dessert.picture" :alt="dessert.name">
+                  <img class="h-10 w-10 rounded-full object-cover" :src="getImageUrl(dessert.picture)"
+                    :alt="dessert.name">
                 </div>
                 <div class="ml-4">
                   <div class="text-sm font-medium text-gray-900">
@@ -125,8 +126,15 @@ import { useAlert } from '~/composables/useAlert';
 
 const alert = useAlert();
 const dessertsStore = useDessertsStore();
+const config = useRuntimeConfig();
 
 const selectedType = ref('');
+
+const getImageUrl = (imagePath: string | undefined): string => {
+  if (!imagePath) return '';
+  if (imagePath.startsWith('http')) return imagePath;
+  return `${config.public.SERVER_URL}${imagePath}`;
+};
 
 const formatType = (type: string) => {
   const typesMap: Record<string, string> = {
