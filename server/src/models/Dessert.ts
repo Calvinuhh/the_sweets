@@ -10,6 +10,7 @@ const dessertSchema = new Schema<Dessert>(
       unique: true,
       match: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/,
       maxlength: 100,
+      lowercase: true,
     },
     price: {
       type: Number,

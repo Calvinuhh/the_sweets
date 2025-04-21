@@ -8,6 +8,11 @@ export interface Dessert {
   flavor: "chocolate" | "vainilla" | "caramelo";
   type: "torta" | "postre_frio" | "rollo" | "galleta";
   active: boolean;
-  additions?: string[];
+  additions?: Array<{
+    _id: string;
+    name: string;
+    price: number;
+  }>;
 }
 
+export type CreateDessert = Pick<Dessert, "name" | "price" | "type" | "flavor">;

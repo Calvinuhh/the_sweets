@@ -54,7 +54,7 @@ export const patchDessertMiddleware = (
     next();
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };
 
@@ -82,6 +82,6 @@ export const patchAdditionMiddleware = (
     next();
   } catch (error) {
     const err = error as Error;
-    res.status(400).json(err.message);
+    res.status(400).json({ message: err.message });
   }
 };

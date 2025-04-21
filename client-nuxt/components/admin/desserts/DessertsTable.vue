@@ -5,9 +5,9 @@
       <div class="flex space-x-2">
         <select v-model="selectedType" @change="updateDesserts"
           class="border rounded-md px-3 py-2 text-sm w-full md:w-64">
-          <option value="">Todos los tipos</option>
+          <option value="">Todos los tipos ({{ dessertsStore.desserts.length }})</option>
           <option v-for="type in dessertsStore.availableTypes" :key="type" :value="type">
-            {{ formatType(type) }}
+            {{ formatType(type) }} ({{dessertsStore.desserts.filter(d => d.type === type).length}})
           </option>
         </select>
         <button @click="refreshDesserts" class="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm">
@@ -22,6 +22,9 @@
           <tr>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Nombre
+            </th>
+            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Imagen
             </th>
             <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Tipo
@@ -42,17 +45,17 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr v-if="dessertsStore.loading">
-            <td colspan="6" class="px-6 py-4 text-center">
+            <td colspan="7" class="px-6 py-4 text-center">
               <Spinner class="mx-auto" />
             </td>
           </tr>
           <tr v-else-if="dessertsStore.error">
-            <td colspan="6" class="px-6 py-4 text-center text-red-500">
+            <td colspan="7" class="px-6 py-4 text-center text-red-500">
               {{ dessertsStore.error }}
             </td>
           </tr>
           <tr v-else-if="dessertsStore.filteredDesserts.length === 0">
-            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+            <td colspan="7" class="px-6 py-4 text-center text-gray-500">
               No se encontraron postres
             </td>
           </tr>
@@ -73,6 +76,14 @@
               </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <span :class="{
+                'bg-green-100 text-green-800': dessert.picture,
+                'bg-gray-100 text-gray-800': !dessert.picture
+              }" class="px-2 py-1 rounded-full text-xs font-semibold">
+                {{ dessert.picture ? 'Sí' : 'No' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
               {{ formatType(dessert.type) }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -90,10 +101,13 @@
               </span>
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <NuxtLink :to="`/admin/desserts/${dessert._id}`" class="text-green-600 hover:text-green-900 mr-3">
+                Ver
+              </NuxtLink>
               <NuxtLink :to="`/admin/desserts/${dessert._id}/edit`" class="text-blue-600 hover:text-blue-900 mr-3">
                 Editar
               </NuxtLink>
-              <button @click="confirmDelete(dessert._id)" class="text-red-600 hover:text-red-900">
+              <button @click="handleDelete(dessert._id, dessert.name)" class="text-red-600 hover:text-red-900">
                 Eliminar
               </button>
             </td>
@@ -106,9 +120,12 @@
 
 <script setup lang="ts">
 import { useDessertsStore } from '~/stores/desserts';
-import Spinner from '~/components/ui/Spinner';
+import Spinner from '~/components/ui/Spinner.vue';
+import { useAlert } from '~/composables/useAlert';
 
+const alert = useAlert();
 const dessertsStore = useDessertsStore();
+
 const selectedType = ref('');
 
 const formatType = (type: string) => {
@@ -130,10 +147,13 @@ const refreshDesserts = () => {
   dessertsStore.fetchDesserts();
 };
 
-const confirmDelete = (id: string) => {
-  if (confirm('¿Estás seguro de eliminar este postre?')) {
-    console.log('Eliminar postre:', id);
-  }
+const handleDelete = async (id: string, name: string) => {
+  await alert.confirmDelete({
+    itemName: name,
+    deleteFn: async () => {
+      await dessertsStore.deleteDessert(id);
+    }
+  });
 };
 
 onMounted(() => {

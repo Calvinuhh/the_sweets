@@ -1,40 +1,35 @@
 import { defineStore } from "pinia";
-import type { Dessert } from "../interfaces/Dessert";
+import type { Dessert, CreateDessert } from "~/interfaces/Dessert";
+
+interface DessertsState {
+  desserts: Dessert[];
+  loading: boolean;
+  error: string | null;
+  currentType: string;
+  currentDessert: (Dessert & { picture?: string }) | null;
+}
 
 export const useDessertsStore = defineStore("desserts", {
-  state: () => ({
-    desserts: [] as Dessert[],
+  state: (): DessertsState => ({
+    desserts: [],
     loading: false,
-    error: null as string | null,
-    currentType: "" as string,
+    error: null,
+    currentType: "",
+    currentDessert: null,
   }),
 
   actions: {
     async fetchDesserts(type?: string) {
-      const {
-        public: { SERVER_URL },
-      } = useRuntimeConfig();
+      const dessertsApi = useDessertsApi();
 
       try {
         this.loading = true;
         this.error = null;
         this.currentType = type || "";
 
-        const url = type
-          ? `${SERVER_URL}/desserts?type=${type}`
-          : `${SERVER_URL}/desserts`;
-
-        this.desserts = await $fetch<Dessert[]>(url, {
-          headers: this.getAuthHeaders(),
-        });
-        
+        this.desserts = await dessertsApi.fetchAllDesserts(type);
       } catch (error: any) {
         this.error = error.data?.message;
-        console.error("Error fetching desserts:", error);
-
-        if (import.meta.client) {
-          console.error(this.error);
-        }
       } finally {
         this.loading = false;
       }
@@ -48,14 +43,62 @@ export const useDessertsStore = defineStore("desserts", {
       await this.fetchDesserts(type);
     },
 
-    getAuthHeaders() {
-      const adminStore = useAdminStore();
-      if (!adminStore.token) {
-        throw new Error("No hay token de autenticación disponible");
+    async createNewDessert(dessertData: CreateDessert): Promise<Dessert> {
+      const dessertsApi = useDessertsApi();
+
+      try {
+        this.loading = true;
+        this.error = null;
+
+        const newDessert = await dessertsApi.createDessert(dessertData);
+        this.desserts.unshift(newDessert);
+        return newDessert;
+      } catch (error: any) {
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
       }
-      return {
-        Authorization: `Bearer ${adminStore.token}`,
-      };
+    },
+
+    async fetchDessertById(id: string): Promise<void> {
+      const dessertsApi = useDessertsApi();
+
+      try {
+        this.loading = true;
+        this.error = null;
+        this.currentDessert = await dessertsApi.getDessertById(id);
+      } catch (error: any) {
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    clearCurrentDessert(): void {
+      this.currentDessert = null;
+    },
+
+    async deleteDessert(id: string): Promise<void> {
+      const dessertsApi = useDessertsApi();
+
+      try {
+        this.loading = true;
+        this.error = null;
+        await dessertsApi.deleteDessert(id);
+
+        this.desserts = this.desserts.filter((d) => d._id !== id);
+
+        if (this.currentDessert?._id === id) {
+          this.currentDessert = null;
+        }
+      } catch (error: any) {
+        this.error = error.message;
+        throw error;
+      } finally {
+        this.loading = false;
+      }
     },
   },
 

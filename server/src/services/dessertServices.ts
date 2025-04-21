@@ -10,7 +10,8 @@ export const createDessert = async (data: CreateDessert) => {
 
   const dessertName = await Dessert.findOne({ name });
 
-  if (dessertName) throw Error("Ya existe un postre con ese nombre");
+  if (dessertName && name.toLowerCase() === dessertName.name.toLowerCase())
+    throw Error("Ya existe un postre con ese nombre");
 
   return await Dessert.create({ name, price, type, flavor });
 };
@@ -21,7 +22,6 @@ export const getDesserts = async (type?: string) => {
       path: "additions",
       select: "name price",
     });
-    if (desserts.length === 0) return "No hay postres disponibles";
     return desserts;
   }
 
@@ -29,8 +29,6 @@ export const getDesserts = async (type?: string) => {
     path: "additions",
     select: "name price",
   });
-
-  if (desserts.length === 0) return `No se encontraron postres de tipo ${type}`;
 
   return desserts;
 };
