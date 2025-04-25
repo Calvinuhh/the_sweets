@@ -9,9 +9,11 @@ import {
 import { validateObjectId } from "../../middlewares/paramsValidations";
 import { newAdditionMiddleware } from "../../middlewares/inputValidations";
 import { patchAdditionMiddleware } from "../../middlewares/patchValidations";
+import { adminAuthorization } from "../../middlewares/adminAuthorization";
 
 const additionsRouter: Router = Router();
 
+additionsRouter.use(adminAuthorization);
 additionsRouter.param("_id", validateObjectId);
 
 additionsRouter.post("/", newAdditionMiddleware, createAdditionController);

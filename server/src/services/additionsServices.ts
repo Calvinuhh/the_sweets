@@ -4,11 +4,13 @@ import { CreateAddition, UpdateAddition } from "../interfaces&types/Addition";
 export const createAddition = async (data: CreateAddition) => {
   const { name, price, type } = data;
 
-  const additionName = await Addition.findOne({ name });
+  const lowerCaseName = name.toLowerCase();
+
+  const additionName = await Addition.findOne({ name: lowerCaseName });
 
   if (additionName) throw Error("Ya existe una adición con ese nombre");
-
-  return await Addition.create({ name, price, type });
+  
+  return await Addition.create({ name: lowerCaseName, price, type });
 };
 
 export const getAdditions = async (type?: string) => {

@@ -9,6 +9,7 @@ const additionSchema = new Schema<Addition>(
       match: /^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/,
       unique: true,
       required: true,
+      lowercase: true,
     },
     price: {
       type: Number,
