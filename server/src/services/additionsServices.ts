@@ -1,5 +1,5 @@
 import Addition from "../models/Addition";
-import { CreateAddition, UpdateAddition } from "../interfaces&types/Addition";
+import { CreateAddition, UpdateAddition } from "../types/Addition";
 
 export const createAddition = async (data: CreateAddition) => {
   const { name, price, type } = data;
@@ -9,7 +9,7 @@ export const createAddition = async (data: CreateAddition) => {
   const additionName = await Addition.findOne({ name: lowerCaseName });
 
   if (additionName) throw Error("Ya existe una adición con ese nombre");
-  
+
   return await Addition.create({ name: lowerCaseName, price, type });
 };
 

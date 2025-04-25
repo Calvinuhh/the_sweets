@@ -7,7 +7,7 @@ import {
   updateAddition,
   deleteAddition,
 } from "../services/additionsServices";
-import { CreateAddition, UpdateAddition } from "../interfaces&types/Addition";
+import { CreateAddition, UpdateAddition } from "../types/Addition";
 
 export const createAdditionController = async (req: Request, res: Response) => {
   try {

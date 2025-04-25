@@ -1,6 +1,6 @@
 import { compare } from "bcrypt";
 import Admin from "../models/Admin";
-import { AdminLogin } from "../interfaces&types/Admin";
+import { AdminLogin } from "../types/Admin";
 import { sign } from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 
@@ -21,7 +21,6 @@ export const login = async (data: AdminLogin) => {
     expiresIn: "1h",
   });
 };
-
 
 export const getAdminById = async (_id: ObjectId) => {
   const admin = await Admin.findById(_id);

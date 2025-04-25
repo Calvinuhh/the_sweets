@@ -1,4 +1,3 @@
-# Logs
 logs
 *.log
 npm-debug.log*
@@ -6,16 +5,21 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+.DS_Store
+.fleet
 
 node_modules
-dist
-dist-ssr
 *.local
 .env
 images
-ngrok.exe
+tailwind.config.js
 
-# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea

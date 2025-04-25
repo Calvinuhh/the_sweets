@@ -7,7 +7,7 @@ import {
   validateFlavorTypes,
   validateAdditionTypes,
 } from "../utils/validations";
-import { CreateDessert } from "../interfaces&types/Dessert";
+import { CreateDessert } from "../types/Dessert";
 
 export const newDessertMiddleware = (
   req: Request,

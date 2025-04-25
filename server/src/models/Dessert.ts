@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import Dessert from "../interfaces&types/Dessert";
+import Dessert from "../types/Dessert";
 
 const dessertSchema = new Schema<Dessert>(
   {

@@ -9,7 +9,7 @@ import {
   deleteImageDessert,
   addAddition,
 } from "../services/dessertServices";
-import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
+import { CreateDessert, UpdateDessert } from "../types/Dessert";
 
 export const createDessertController = async (req: Request, res: Response) => {
   try {

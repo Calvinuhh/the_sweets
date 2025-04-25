@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import Addition from "../interfaces&types/Addition";
+import Addition from "../types/Addition";
 
 const additionSchema = new Schema<Addition>(
   {

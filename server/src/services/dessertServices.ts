@@ -1,4 +1,4 @@
-import { CreateDessert, UpdateDessert } from "../interfaces&types/Dessert";
+import { CreateDessert, UpdateDessert } from "../types/Dessert";
 import Dessert from "../models/Dessert";
 import Addition from "../models/Addition";
 import path from "path";
