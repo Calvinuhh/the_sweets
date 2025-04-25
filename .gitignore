@@ -18,7 +18,7 @@ node_modules
 *.local
 .env
 images
-tailwind.config.js
+/client/tailwind.config.js
 
 .vscode/*
 !.vscode/extensions.json
