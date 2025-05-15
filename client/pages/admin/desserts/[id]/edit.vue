@@ -130,17 +130,18 @@ const formData = reactive<UpdateDessert>({
   active: true
 });
 
+const formKeys = ['name', 'price', 'type', 'flavor', 'portions', 'levels', 'active'] as const;
+
 const hasChanges = computed(() => {
   if (!dessert.value) return false;
 
-  return Object.keys(formData).some(key => {
+  return formKeys.some((key) => {
     const formValue = formData[key];
     const originalValue = dessert.value?.[key];
 
     if (key === 'price' || key === 'portions' || key === 'levels') {
       return Number(formValue) !== Number(originalValue);
     }
-
     return formValue !== originalValue;
   });
 });
@@ -182,9 +183,9 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
 
     const changes: Partial<UpdateDessert> = {};
-    for (const key in formData) {
+    for (const key of formKeys) {
       if (formData[key] !== dessert.value?.[key]) {
-        changes[key] = formData[key];
+        (changes as any)[key] = formData[key];
       }
     }
 

@@ -1,6 +1,5 @@
 <template>
     <div class="flex items-center gap-4">
-        <button class="text-[#6b3e26] hover:text-[#a67c52] font-semibold transition">Mi cuenta</button>
         <button class="relative">
             <svg class="w-7 h-7 text-[#6b3e26]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round"

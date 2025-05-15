@@ -4,11 +4,16 @@ export function useClientsDessertsApi() {
   } = useRuntimeConfig();
 
   const fetchDesserts = async (params?: { price?: string; type?: string }) => {
-    return await $fetch(SERVER_URL, { params });
+    let url = `${SERVER_URL}/clients`;
+    if (params && Object.keys(params).length > 0) {
+      const query = new URLSearchParams(params as any).toString();
+      url += `?${query}`;
+    }
+    return await $fetch(url);
   };
 
   const fetchDessertById = async (_id: string) => {
-    return await $fetch(`${SERVER_URL}/${_id}`);
+    return await $fetch(`${SERVER_URL}/clients/${_id}`);
   };
 
   return { fetchDesserts, fetchDessertById };

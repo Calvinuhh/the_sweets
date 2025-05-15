@@ -4,11 +4,11 @@
       <h1 class="text-2xl font-bold mb-6 text-center">Login Administrador</h1>
 
       <form @submit.prevent="login" class="space-y-4">
-        <input v-model="username" type="text" placeholder="Username" class="w-full px-4 py-2 border rounded-lg text-black"
-          required />
+        <input v-model="username" type="text" placeholder="Username"
+          class="w-full px-4 py-2 border rounded-lg text-black" required />
 
-        <input v-model="password" type="password" placeholder="Contraseña" class="w-full px-4 py-2 border rounded-lg text-black"
-          required />
+        <input v-model="password" type="password" placeholder="Contraseña"
+          class="w-full px-4 py-2 border rounded-lg text-black" required />
 
         <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
           Ingresar
@@ -35,5 +35,3 @@ async function login() {
   }
 }
 </script>
-
-<style scoped></style>

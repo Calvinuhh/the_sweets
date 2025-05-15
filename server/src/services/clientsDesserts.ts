@@ -29,9 +29,12 @@ export const getDesserts = async (price?: string, type?: string) => {
 };
 
 export const getDessertById = async (_id: string) => {
-  const dessert = await Dessert.findById(_id);
+  const dessert = await Dessert.findById(_id).populate({
+    path: "additions",
+    select: "name price",
+  });
 
-  if (!dessert) return "Postre no encontrado";
+  if (!dessert) throw Error("Postre no encontrado");
 
   return dessert;
 };

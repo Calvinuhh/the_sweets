@@ -1,8 +1,5 @@
 import type Addition from "~/interfaces/Addition";
-import type {
-  CreateAddition,
-  UpdateAddition,
-} from "~/interfaces/Addition";
+import type { CreateAddition, UpdateAddition } from "~/interfaces/Addition";
 
 export const useAdditionsApi = () => {
   const {

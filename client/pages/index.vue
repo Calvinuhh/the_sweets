@@ -3,8 +3,9 @@
     :p1="'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin euismod, urna eu tincidunt consectetur, nisi nisl aliquam nunc, eget aliquam massa nisi nec erat.'"
     :p2="'Descubre nuestros postres artesanales y disfruta de una experiencia dulce y única.'" />
 
-  <div class="flex flex-col md:flex-row items-center justify-center gap-8 my-12 max-w-5xl mx-auto">
-    <div class="flex-1 text-center md:text-left">
+  <div
+    class="flex flex-col md:flex-row items-center justify-center gap-8 my-12 max-w-[1500px] mx-auto bg-[#c3ac834f] p-8 rounded-lg shadow-lg">
+    <div class="flex-1 flex flex-col items-center justify-center text-center">
       <h2 class="text-3xl font-bold font-moondance text-[#6b3e26] mb-4">¡Síguenos en Instagram!</h2>
       <p class="text-[#6b3e26] text-lg">
         Descubre más de nuestros postres, novedades y promociones en nuestro perfil de Instagram. ¡No te pierdas ninguna
@@ -22,6 +23,6 @@ import ContainerBckGroundImage from "~/components/clients/ContainerBckGroundImag
 import InstagramPost from "~/components/clients/InstagramPost.vue";
 
 definePageMeta({
-  layout: "default"
+  layout: "clients"
 })
 </script>

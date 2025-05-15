@@ -63,7 +63,8 @@
 </template>
 
 <script setup lang="ts">
-import type { Addition, UpdateAddition } from '~/interfaces/Addition';
+import type { UpdateAddition, AdditionType } from '~/interfaces/Addition';
+import type Addition from '~/interfaces/Addition';
 import { useAdditionsStore } from '~/stores/additions';
 import { useAlert } from '~/composables/useAlert';
 import Spinner from '~/components/ui/Spinner.vue';
@@ -82,11 +83,12 @@ const formData = reactive<UpdateAddition>({
     price: 1000,
     type: 'cobertura'
 });
+const formKeys = ['name', 'price', 'type'] as const;
 
 const hasChanges = computed(() => {
     if (!addition.value) return false;
 
-    return Object.keys(formData).some(key => {
+    return formKeys.some(key => {
         const formValue = formData[key];
         const originalValue = addition.value?.[key];
 
@@ -129,25 +131,43 @@ const handleSubmit = async () => {
 
     try {
         isSubmitting.value = true;
+        // Cambio aquí: UpdateAddition ya es Partial<CreateAddition>
+        const changes: UpdateAddition = {};
 
-        const changes: Partial<UpdateAddition> = {};
-        for (const key in formData) {
-            if (formData[key] !== addition.value?.[key]) {
-                changes[key] = formData[key];
-            }
+        // Nombre (string)
+        if (formData.name !== addition.value?.name) {
+            changes.name = formData.name;
         }
 
-        await additionsStore.updateAddition(route.params.id as string, changes);
+        // Precio (number). Convierto a number si viene como string:
+        if (formData.price !== addition.value?.price) {
+            changes.price = typeof formData.price === 'string'
+                ? Number(formData.price)
+                : formData.price;
+        }
+
+        // Tipo (literal union). Aseguro que encaja en AdditionType
+        if (formData.type !== addition.value?.type) {
+            changes.type = formData.type as AdditionType;
+        }
+
+        await additionsStore.updateAddition(
+            route.params.id as string,
+            changes
+        );
 
         alert.showSuccess('Adición actualizada correctamente');
         navigateTo(`/admin/additions`);
     } catch (err: unknown) {
-        const message = err instanceof Error ? err.message : 'Error al actualizar la adición';
+        const message = err instanceof Error
+            ? err.message
+            : 'Error al actualizar la adición';
         alert.showError(message);
     } finally {
         isSubmitting.value = false;
     }
 };
+
 
 onUnmounted(() => {
     additionsStore.clearCurrentAddition();

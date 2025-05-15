@@ -7,15 +7,17 @@
             </div>
             <ul class="flex gap-8">
                 <li>
-                    <NuxtLink to="/" class="text-[#6b3e26] font-semibold hover:text-[#a67c52] transition"
+                    <NuxtLink to="/" class="text-[#6b3e26] cursor-pointer font-semibold hover:text-[#a67c52] transition"
                         active-class="!text-pink-700" exact>Inicio</NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/products" class="text-[#6b3e26] font-semibold hover:text-[#a67c52] transition"
+                    <NuxtLink to="/products"
+                        class="text-[#6b3e26] cursor-pointer font-semibold hover:text-[#a67c52] transition"
                         active-class="!text-pink-700">Productos</NuxtLink>
                 </li>
                 <li>
-                    <NuxtLink to="/contact" class="text-[#6b3e26] font-semibold hover:text-[#a67c52] transition"
+                    <NuxtLink to="/contact"
+                        class="text-[#6b3e26] cursor-pointer font-semibold hover:text-[#a67c52] transition"
                         active-class="!text-pink-700">Contacto</NuxtLink>
                 </li>
             </ul>

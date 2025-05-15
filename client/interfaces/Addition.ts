@@ -1,4 +1,4 @@
-type AdditionType = "cobertura" | "relleno" | "decoracion" | "topping";
+export type AdditionType = "cobertura" | "relleno" | "decoracion" | "topping";
 
 export default interface Addition {
   _id: string;

@@ -1,3 +1,9 @@
+export type Addition = {
+  _id: string;
+  name: string;
+  price: number;
+};
+
 export interface Dessert {
   _id: string;
   name: string;
@@ -8,11 +14,7 @@ export interface Dessert {
   flavor: "chocolate" | "vainilla" | "caramelo";
   type: "torta" | "postre_frio" | "rollo" | "galleta";
   active: boolean;
-  additions?: Array<{
-    _id: string;
-    name: string;
-    price: number;
-  }>;
+  additions?: Array<Addition>;
 }
 
 export type CreateDessert = Pick<Dessert, "name" | "price" | "type" | "flavor">;

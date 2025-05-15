@@ -109,7 +109,7 @@ const fetchData = async () => {
         if (!dessertsStore.currentDessert) throw new Error('No se encontró el postre');
         assignedIds.value = dessertsStore.currentDessert.additions?.map((a: any) => typeof a === 'string' ? a : a._id) || [];
     } catch (err: any) {
-        alert.showError(err.message || 'Error al cargar los datos');
+        alert.showError(err.message);
     } finally {
         loading.value = false;
     }

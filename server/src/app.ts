@@ -2,10 +2,10 @@ import express, { json } from "express";
 import router from "./router/router";
 import cors from "cors";
 import path from "path";
-import morgan from "morgan"
+import morgan from "morgan";
 import { multerError } from "./multer/multer";
 
-process.loadEnvFile()
+process.loadEnvFile();
 const { CLIENT_URL } = process.env as {
   CLIENT_URL: string;
 };
@@ -18,10 +18,10 @@ app.use(
   })
 );
 
-app.use(morgan("dev"))
+app.use(morgan("dev"));
 app.use(json());
-app.use(router);
+app.use("/api", router);
 app.use(multerError);
-app.use("/images", express.static(path.join(__dirname, "/images")));
+app.use("/api/images", express.static(path.join(__dirname, "/images")));
 
 export default app;
