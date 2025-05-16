@@ -2,14 +2,15 @@
   <div class="bg-white rounded-lg shadow overflow-hidden">
     <div class="p-4 border-b">
       <label class="block text-sm font-medium text-gray-700 mb-1">Filtrar por tipo:</label>
-      <div class="flex space-x-2">
-        <select v-model="selectedType" class="border rounded-md px-3 py-2 text-sm w-full md:w-64">
+      <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+        <select v-model="selectedType" class="border rounded-md px-3 py-2 text-sm w-full sm:w-64">
           <option value="">Todos los tipos ({{ dessertsStore.desserts.length }})</option>
           <option v-for="type in dessertsStore.availableTypes" :key="type" :value="type">
             {{ formatType(type) }} ({{dessertsStore.desserts.filter(d => d.type === type).length}})
           </option>
         </select>
-        <button @click="refreshDesserts" class="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm">
+        <button @click="refreshDesserts"
+          class="bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm w-full sm:w-auto">
           <Icon name="heroicons:arrow-path" class="h-5 w-5" />
         </button>
       </div>

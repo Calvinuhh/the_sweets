@@ -1,9 +1,9 @@
 <template>
-  <nav class="flex flex-col sm:flex-row items-center bg-gray-800 p-4">
-    <div class="absolute left-1/2 transform -translate-x-1/2">
-      <div class="flex gap-2">
+  <nav class="flex flex-col sm:flex-row items-center bg-gray-800 p-4 relative">
+    <div class="w-full flex justify-center sm:static sm:left-0 sm:transform-none">
+      <div class="flex flex-wrap gap-2 justify-center">
         <NuxtLink v-for="item in navItems" :key="item.label" :to="item.to"
-          class="px-4 py-2 rounded-lg font-semibold transition-colors duration-200" :class="{
+          class="px-4 py-2 rounded-lg font-semibold transition-colors duration-200 text-center" :class="{
             'bg-blue-600 text-white': isActive(item.to),
             'bg-gray-600 text-gray-200 hover:bg-gray-500': !isActive(item.to),
           }">
@@ -11,8 +11,7 @@
         </NuxtLink>
       </div>
     </div>
-
-    <div class="ml-auto">
+    <div class="w-full sm:w-auto mt-4 sm:mt-0 sm:ml-auto flex justify-center sm:justify-end">
       <LogoutBtn class="border-l border-gray-600 pl-4" />
     </div>
   </nav>

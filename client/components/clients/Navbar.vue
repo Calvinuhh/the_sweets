@@ -5,7 +5,17 @@
                 <img src="/logo.png" alt="Logo" class="h-10 w-10 object-contain" />
                 <span class="font-cinzel text-2xl font-bold text-[#6b3e26]">The Sweet S</span>
             </div>
-            <ul class="flex gap-8">
+            <button
+                class="md:hidden flex items-center justify-center p-2 rounded focus:outline-none focus:ring-2 focus:ring-[#6b3e26]/40"
+                @click="open = !open" aria-label="Abrir menú">
+                <svg v-if="!open" class="w-7 h-7 text-[#6b3e26]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+                <svg v-else class="w-7 h-7 text-[#6b3e26]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <ul class="hidden md:flex gap-8">
                 <li>
                     <NuxtLink to="/" class="text-[#6b3e26] cursor-pointer font-semibold hover:text-[#a67c52] transition"
                         active-class="!text-pink-700" exact>Inicio</NuxtLink>
@@ -21,11 +31,50 @@
                         active-class="!text-pink-700">Contacto</NuxtLink>
                 </li>
             </ul>
-            <Cart />
+            <div class="hidden md:block">
+                <Cart />
+            </div>
         </div>
+        <transition name="fade">
+            <div v-if="open" class="md:hidden bg-[#c3ac83] px-4 pb-4">
+                <ul class="flex flex-col gap-4">
+                    <li>
+                        <NuxtLink to="/" class="block text-[#6b3e26] font-semibold py-2 hover:text-[#a67c52] transition"
+                            active-class="!text-pink-700" exact @click="open = false">Inicio</NuxtLink>
+                    </li>
+                    <li>
+                        <NuxtLink to="/products"
+                            class="block text-[#6b3e26] font-semibold py-2 hover:text-[#a67c52] transition"
+                            active-class="!text-pink-700" @click="open = false">Productos</NuxtLink>
+                    </li>
+                    <li>
+                        <NuxtLink to="/contact"
+                            class="block text-[#6b3e26] font-semibold py-2 hover:text-[#a67c52] transition"
+                            active-class="!text-pink-700" @click="open = false">Contacto</NuxtLink>
+                    </li>
+                    <li>
+                        <Cart />
+                    </li>
+                </ul>
+            </div>
+        </transition>
     </nav>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue'
 import Cart from '~/components/clients/Cart.vue'
+const open = ref(false)
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>

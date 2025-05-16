@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-900 px-4">
-    <div class="bg-gray-700 p-8 rounded-2xl shadow-md w-full max-w-md text-white">
+  <div class="min-h-screen flex items-center justify-center bg-gray-900 px-2 sm:px-4">
+    <div class="bg-gray-700 p-4 sm:p-8 rounded-2xl shadow-md w-full max-w-md text-white">
       <h1 class="text-2xl font-bold mb-6 text-center">Login Administrador</h1>
 
       <form @submit.prevent="login" class="space-y-4">
