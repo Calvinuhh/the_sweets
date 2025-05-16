@@ -25,7 +25,7 @@
                     <div>
                         <span class="font-semibold">Sabor:</span> {{ dessert.flavor }}
                     </div>
-                    <div>
+                    <div v-if="!isRollo && !isGalleta">
                         <span class="font-semibold">Niveles:</span> {{ dessert.levels }}
                     </div>
                     <div>
@@ -35,41 +35,50 @@
                 <div class="my-2">
                     <span class="text-2xl font-bold text-gray-900">Precio: ${{ dessert.price.toLocaleString() }}</span>
                 </div>
-                <div>
-                    <label class="block font-semibold mb-2 text-[#6b3e26]">Tipo de compra</label>
-                    <select v-model="purchaseType" class="w-full border rounded p-2">
-                        <option value="unidad">Por unidad</option>
-                        <option value="porciones">Por porciones</option>
-                    </select>
-                </div>
-                <div v-if="purchaseType === 'unidad'">
+                <div v-if="isRollo || isGalleta">
                     <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de unidades</label>
                     <select v-model="selectedUnits" class="w-full border rounded p-2">
                         <option value="1">1</option>
                         <option value="2">2</option>
-                        <option value="+3">+3 (Conversar con The Sweet S para confirmación)</option>
+                        <option value="3">+3 (Conversar con The Sweet S para confirmación)</option>
                     </select>
                 </div>
-                <div v-if="purchaseType === 'porciones' && dessert.portions && dessert.portions > 1">
-                    <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de porciones</label>
-                    <select v-model="selectedPortions" class="w-full border rounded p-2">
-                        <option v-for="n in maxPorciones" :key="n" :value="n">{{ n }}</option>
-                    </select>
-                </div>
-                <div v-if="purchaseType !== 'porciones'">
-                    <label class="block font-semibold mb-2 text-[#6b3e26]">
-                        <input type="checkbox" v-model="showLevels" class="mr-2 accent-pink-500" />
-                        ¿Quieres niveles en tu torta?
-                    </label>
-                    <div v-if="showLevels">
-                        <label class="block font-semibold mb-2 text-[#6b3e26]">Niveles</label>
-                        <select v-model="selectedLevel" class="w-full border rounded p-2">
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="+3">+3 (Conversar con The Sweet S para confirmación)</option>
+                <template v-else>
+                    <div>
+                        <label class="block font-semibold mb-2 text-[#6b3e26]">Tipo de compra</label>
+                        <select v-model="purchaseType" class="w-full border rounded p-2">
+                            <option value="unidad">Por unidad</option>
+                            <option value="porciones">Por porciones</option>
                         </select>
                     </div>
-                </div>
+                    <div v-if="purchaseType === 'unidad'">
+                        <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de unidades</label>
+                        <select v-model="selectedUnits" class="w-full border rounded p-2">
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">+3 (Conversar con The Sweet S para confirmación)</option>
+                        </select>
+                    </div>
+                    <div v-if="purchaseType === 'porciones' && dessert.portions && dessert.portions > 1">
+                        <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de porciones</label>
+                        <select v-model="selectedPortions" class="w-full border rounded p-2">
+                            <option v-for="n in maxPorciones" :key="n" :value="n">{{ n }}</option>
+                        </select>
+                    </div>
+                    <div v-if="purchaseType !== 'porciones'">
+                        <label class="block font-semibold mb-2 text-[#6b3e26]">
+                            <input type="checkbox" v-model="showLevels" class="mr-2 accent-pink-500" />
+                            ¿Quieres niveles en tu torta?
+                        </label>
+                        <div v-if="showLevels">
+                            <label class="block font-semibold mb-2 text-[#6b3e26]">Niveles</label>
+                            <select v-model="selectedLevel" class="w-full border rounded p-2">
+                                <option value="2">2</option>
+                                <option value="+3">+3 (Conversar con The Sweet S para confirmación)</option>
+                            </select>
+                        </div>
+                    </div>
+                </template>
                 <div v-if="dessert.additions && dessert.additions.length">
                     <label class="block font-semibold mb-2 text-[#6b3e26]">Adiciones disponibles</label>
                     <div class="flex flex-col gap-2">
@@ -82,11 +91,19 @@
                     </div>
                 </div>
                 <div class="flex items-center justify-between mt-6">
-                    <span class="text-xl font-bold text-[#6b3e26]">Total: ${{ total.toLocaleString() }}</span>
+                    <span class="text-xl font-bold text-[#6b3e26]">
+                        Total: ${{ total.toLocaleString() }}<span v-if="showLevels">+</span>
+                    </span>
                     <button
-                        class="bg-pink-600 hover:bg-pink-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition">
+                        class="bg-pink-600 hover:bg-pink-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+                        @click="handleAddToCart">
                         Agregar al carrito
                     </button>
+                </div>
+                <div v-if="showLevels" class="flex items-center mt-2 text-sm text-yellow-700">
+                    <span class="mr-1"
+                        title="El precio final puede variar según la cantidad de niveles y detalles seleccionados.">ℹ️</span>
+                    El precio puede variar según la cantidad de niveles seleccionados.
                 </div>
             </div>
         </div>
@@ -94,10 +111,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useClientsDessertsApi } from '~/composables/useClientsDessertsApi'
+import { addToCart } from '~/stores/cart'
+import { useAlert } from '~/composables/useAlert'
 import type { Dessert } from '~/interfaces/Dessert'
+import type { CartItem } from '~/interfaces/Cart'
 
 const { public: { SERVER_URL } } = useRuntimeConfig()
 const route = useRoute()
@@ -116,6 +136,18 @@ const selectedLevel = ref<string>('1')
 
 const selectedUnits = ref<string>('1')
 const selectedPortions = ref<number>(1)
+
+const isRollo = computed(() => dessert.value?.type?.toLowerCase() === 'rollo')
+const isGalleta = computed(() => dessert.value?.type?.toLowerCase() === 'galleta')
+
+const alert = useAlert()
+
+watchEffect(() => {
+    if (isRollo.value || isGalleta.value) {
+        purchaseType.value = 'unidad'
+        showLevels.value = false
+    }
+})
 
 const maxPorciones = computed(() => {
     if (dessert.value?.portions && dessert.value.portions > 1) {
@@ -152,6 +184,30 @@ const total = computed(() => {
 
 function goBack() {
     router.back()
+}
+
+function handleAddToCart() {
+    if (!dessert.value) return;
+
+    if (selectedUnits.value === '+3' || (purchaseType.value === 'porciones' && !selectedPortions.value)) {
+        alert.showError('Por favor, contacta a The Sweet S para confirmar cantidades mayores.');
+        return;
+    }
+
+    const quantity = purchaseType.value === 'porciones'
+        ? Number(selectedPortions.value)
+        : Number(selectedUnits.value);
+
+    const item: CartItem = {
+        productId: dessert.value._id,
+        name: dessert.value.name,
+        price: total.value,
+        quantity,
+        imageUrl: dessert.value.picture ? `${SERVER_URL}${dessert.value.picture}` : undefined,
+    };
+
+    addToCart(item);
+    alert.showSuccess('¡Postre agregado al carrito!');
 }
 
 onMounted(async () => {
