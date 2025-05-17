@@ -156,30 +156,35 @@ const maxPorciones = computed(() => {
     return []
 })
 
-const total = computed(() => {
+const basePrice = computed(() => {
     const d = dessert.value;
     if (!d) return 0;
-
-    let base = 0;
     if (purchaseType.value === 'unidad') {
         if (selectedUnits.value === '+3') return 0;
-        base = d.price * Number(selectedUnits.value);
+        return d.price;
     } else if (purchaseType.value === 'porciones') {
         if (!d.portions || !selectedPortions.value) return 0;
-        base = Math.round((d.price / d.portions) * Number(selectedPortions.value));
+        return Math.round(d.price / d.portions);
     }
+    return 0;
+});
 
-    let additionsTotal = 0;
-    if (d.additions && selectedAdditions.value.length) {
-        const selected = d.additions.filter(a => selectedAdditions.value.includes(a._id));
-        if (purchaseType.value === 'unidad' && selectedUnits.value !== '+3') {
-            additionsTotal = selected.reduce((sum, a) => sum + a.price, 0);
-        } else if (purchaseType.value === 'porciones' && d.portions) {
-            additionsTotal = selected.reduce((sum, a) => sum + a.price, 0);
-        }
+const additionsTotal = computed(() => {
+    const d = dessert.value;
+    if (!d || !d.additions || !selectedAdditions.value.length) return 0;
+    const selected = d.additions.filter(a => selectedAdditions.value.includes(a._id));
+    return selected.reduce((sum, a) => sum + a.price, 0);
+});
+
+const quantity = computed(() => {
+    if (purchaseType.value === 'porciones') {
+        return Number(selectedPortions.value);
     }
+    return selectedUnits.value === '+3' ? 0 : Number(selectedUnits.value);
+});
 
-    return base + additionsTotal;
+const total = computed(() => {
+    return (basePrice.value + additionsTotal.value) * quantity.value;
 });
 
 function goBack() {
@@ -194,16 +199,22 @@ function handleAddToCart() {
         return;
     }
 
-    const quantity = purchaseType.value === 'porciones'
-        ? Number(selectedPortions.value)
-        : Number(selectedUnits.value);
+    const d = dessert.value;
+    const selected = d.additions && selectedAdditions.value.length
+        ? d.additions.filter(a => selectedAdditions.value.includes(a._id)).map(a => ({
+            id: a._id,
+            name: a.name,
+            price: a.price
+        }))
+        : [];
 
     const item: CartItem = {
-        productId: dessert.value._id,
-        name: dessert.value.name,
-        price: total.value,
-        quantity,
-        imageUrl: dessert.value.picture ? `${SERVER_URL}${dessert.value.picture}` : undefined,
+        productId: d._id,
+        name: d.name,
+        price: basePrice.value,
+        quantity: quantity.value,
+        imageUrl: d.picture ? `${SERVER_URL}${d.picture}` : undefined,
+        additions: selected.length ? selected : undefined
     };
 
     addToCart(item);

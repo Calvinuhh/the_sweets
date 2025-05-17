@@ -3,7 +3,10 @@ export interface CartItem {
   name: string;
   price: number;
   quantity: number;
-  imageUrl?: string;
+  imageUrl?: string; 
+  purchaseType?: "quantity" | "portion"; 
+  portion?: number; 
+  additions?: { id: string; name: string; price: number }[]; 
 }
 
 export interface Cart {

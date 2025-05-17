@@ -1,13 +1,34 @@
 <script setup lang="ts">
 import { cartItems, cartTotal, clearCart } from '~/stores/cart'
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import type { CartItem } from '~/interfaces/Cart'
+
+const router = useRouter()
 
 const itemsCount = computed(() =>
-    cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
+    cartItems.value.reduce((sum: number, item: CartItem) => sum + item.quantity, 0)
+)
+
+const getItemTotalPrice = (item: CartItem): number => {
+    const basePrice = item.price * item.quantity;
+    const additionsPrice = item.additions && Array.isArray(item.additions)
+        ? item.additions.reduce((sum: number, add: { id: string; name: string; price: number }) => sum + (Number(add.price) || 0), 0) * item.quantity
+        : 0;
+    return basePrice + additionsPrice;
+}
+
+const totalWithAdditions = computed(() =>
+    cartItems.value.reduce((sum: number, item: CartItem) => sum + getItemTotalPrice(item), 0)
 )
 
 const showDropdown = ref(false)
 let hideTimeout: ReturnType<typeof setTimeout> | null = null
+
+const isMounted = ref(false)
+onMounted(() => {
+    isMounted.value = true
+})
 
 function handleMouseEnter() {
     if (hideTimeout) {
@@ -21,6 +42,10 @@ function handleMouseLeave() {
         showDropdown.value = false
     }, 500)
 }
+
+function goToCheckout() {
+    router.push('/checkout')
+}
 </script>
 
 <template>
@@ -30,7 +55,7 @@ function handleMouseLeave() {
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9m-5-9V6a2 2 0 10-4 0v7"></path>
             </svg>
-            <span class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1">
+            <span v-if="isMounted" class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-1">
                 {{ itemsCount }}
             </span>
         </button>
@@ -49,21 +74,24 @@ function handleMouseLeave() {
                         <div class="flex-1">
                             <div class="font-semibold text-sm text-[#6b3e26] truncate">{{ item.name }}</div>
                             <div class="text-xs text-gray-500">Cantidad: {{ item.quantity }}</div>
+                            <div v-if="item.additions && item.additions.length" class="text-xs text-gray-500">
+                                Con adiciones
+                            </div>
                         </div>
                         <div class="font-bold text-sm text-[#6b3e26] min-w-[60px] text-right">
-                            ${{ (item.price * item.quantity).toLocaleString() }}
+                            ${{ getItemTotalPrice(item).toLocaleString() }}
                         </div>
                     </div>
                 </div>
                 <div class="flex justify-between items-center mt-3 pt-2 border-t">
                     <span class="font-semibold text-[#6b3e26]">Total:</span>
-                    <span class="font-bold text-[#6b3e26]">${{ cartTotal.toLocaleString() }}</span>
+                    <span class="font-bold text-[#6b3e26]">${{ totalWithAdditions.toLocaleString() }}</span>
                 </div>
                 <button v-if="cartItems.length" @click="clearCart"
                     class="mt-3 w-full bg-pink-100 hover:bg-pink-200 text-pink-700 font-semibold py-2 rounded transition text-sm">
                     Vaciar carrito
                 </button>
-                <button v-if="cartItems.length"
+                <button v-if="cartItems.length" @click="goToCheckout"
                     class="mt-2 w-full bg-gradient-to-r from-pink-500 to-yellow-400 hover:from-pink-600 hover:to-yellow-500 text-white font-bold py-2 rounded-lg shadow transition text-base flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round"
