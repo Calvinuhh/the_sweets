@@ -7,11 +7,13 @@
             style="background: linear-gradient(to right, rgba(255,255,255,0) 10%, rgba(255,255,255,0.95) 100%); z-index: 3;">
         </div>
         <div class="relative z-10 flex w-full h-full items-center justify-center px-4">
-            <div class="w-full max-w-xs sm:max-w-md md:max-w-lg text-center mx-auto">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold font-moondance text-[#6b3e26] mb-4 leading-tight">
+            <div
+                class="w-full max-w-xs sm:max-w-md md:max-w-lg text-center mx-auto bg-black/50 rounded-xl p-6 sm:p-8 shadow-lg">
+                <h2
+                    class="text-3xl sm:text-4xl md:text-5xl font-bold font-moondance text-white mb-4 leading-tight drop-shadow-lg">
                     {{ title }}
                 </h2>
-                <p class="text-[#6b3e26] text-base sm:text-lg md:text-xl">
+                <p class="text-white text-base sm:text-lg md:text-xl drop-shadow-md">
                     {{ p1 }}
                     <br /><br />
                     {{ p2 }}
