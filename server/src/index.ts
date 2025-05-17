@@ -3,7 +3,6 @@ import DBConnection from "./config/database";
 import createAdmin from "./utils/createAdmin";
 import createImagesFolder from "./utils/createImagesFolder";
 
-process.loadEnvFile();
 const { PORT } = process.env;
 
 DBConnection()

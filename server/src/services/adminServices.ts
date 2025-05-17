@@ -4,7 +4,6 @@ import { AdminLogin } from "../types/Admin";
 import { sign } from "jsonwebtoken";
 import { ObjectId } from "mongoose";
 
-process.loadEnvFile();
 const { JWT_SECRET } = process.env as { JWT_SECRET: string };
 
 export const login = async (data: AdminLogin) => {

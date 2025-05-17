@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 import { getAdminById } from "../services/adminServices";
 
-process.loadEnvFile();
 const { JWT_SECRET } = process.env as { JWT_SECRET: string };
 
 export const adminAuthorization = async (

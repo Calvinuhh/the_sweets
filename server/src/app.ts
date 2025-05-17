@@ -5,7 +5,6 @@ import path from "path";
 import morgan from "morgan";
 import { multerError } from "./multer/multer";
 
-process.loadEnvFile();
 const { CLIENT_URL } = process.env as {
   CLIENT_URL: string;
 };

@@ -1,7 +1,6 @@
 import Admin from "../models/Admin";
 import { hash } from "bcrypt";
 
-process.loadEnvFile();
 const { ADMIN, PASSWORD } = process.env as { [key: string]: string };
 
 const createAdmin = async () => {
