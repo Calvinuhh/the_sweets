@@ -16,6 +16,7 @@ const dessertSchema = new Schema(
   {
     _id: false,
     versionKey: false,
+    timestamps: false,
   }
 );
 

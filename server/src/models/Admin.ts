@@ -16,6 +16,7 @@ const adminSchema = new Schema<AdminModel>(
   },
   {
     versionKey: false,
+    timestamps: false,
   }
 );
 
