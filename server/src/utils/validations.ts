@@ -59,3 +59,14 @@ export const validatePhone = (phone: string) => {
   if (!/^\d{10}$/.test(phone))
     throw Error("El teléfono debe contener 10 dígitos y debe ser un numero");
 };
+
+export const validatePassword = (password: string) => {
+  if (
+    !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
+      password
+    )
+  )
+    throw Error(
+      "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo"
+    );
+};
