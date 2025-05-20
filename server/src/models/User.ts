@@ -29,8 +29,6 @@ const userSchema = new Schema<User>(
       type: String,
       required: true,
       trim: true,
-      match:
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
     },
     country_code: {
       type: String,
@@ -39,6 +37,14 @@ const userSchema = new Schema<User>(
     phone: {
       type: String,
       required: true,
+    },
+    token: {
+      type: String,
+      default: null,
+    },
+    active: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: false, versionKey: false }

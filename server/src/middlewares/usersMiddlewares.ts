@@ -50,3 +50,23 @@ export const validateUserRegistration = (
     });
   }
 };
+
+export const validateTokenConfirmation = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token, email } = req.body;
+
+    if (!token) throw Error("El campo 'token' es requerido");
+    if (!email) throw Error("El campo 'email' es requerido");
+
+    next();
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};

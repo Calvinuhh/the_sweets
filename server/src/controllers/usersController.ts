@@ -1,5 +1,5 @@
-import { register } from "../services/usersServices";
-import { Request, Response } from "express";
+import { register, confirmRegistration } from "../services/usersServices";
+import { NextFunction, Request, Response } from "express";
 import { UserRegistration } from "../types/User";
 
 export const registerController = async (req: Request, res: Response) => {
@@ -23,6 +23,22 @@ export const registerController = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(result);
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+export const confirmRegistrationController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { token, email } = req.body;
+
+    res.status(200).json(await confirmRegistration(token, email));
   } catch (error) {
     const err = error as Error;
     res.status(400).json({

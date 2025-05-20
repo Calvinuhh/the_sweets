@@ -8,7 +8,9 @@ export interface User {
   password: string;
   country_code: string;
   phone: string;
+  token?: string | null;
+  active: boolean;
 }
 
-export type UserRegistration = Omit<User, "_id">;
+export type UserRegistration = Omit<User, "_id" | "active" | "token">;
 export type UserLogin = Pick<User, "email" | "password">;
