@@ -1,6 +1,6 @@
 import { UserLogin, UserRegistration } from "../types/User";
 import User from "../models/User";
-import { hash, compare } from "bcrypt";
+import { hash } from "bcrypt";
 import { generateRandomToken } from "../utils/tokenGenerator";
 import { sendn8nEmailRegistration } from "../utils/n8n";
 
@@ -9,7 +9,7 @@ export const register = async (userData: UserRegistration) => {
 
   const user = await User.findOne({ email });
 
-  if (user) throw Error("El usuario ya existe");
+  if (user) return "El usuario ya existe";
 
   const token = generateRandomToken();
 
@@ -26,7 +26,8 @@ export const register = async (userData: UserRegistration) => {
   try {
     await sendn8nEmailRegistration(email, name, token);
   } catch (error) {
-    throw Error(`Error al enviar el email: ${error}`);
+    await User.findByIdAndDelete(newUser._id);
+    throw error;
   }
 
   return newUser;

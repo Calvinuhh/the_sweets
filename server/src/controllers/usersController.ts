@@ -1,5 +1,5 @@
 import { register, confirmRegistration } from "../services/usersServices";
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserRegistration } from "../types/User";
 
 export const registerController = async (req: Request, res: Response) => {

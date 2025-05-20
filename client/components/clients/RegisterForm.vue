@@ -1,7 +1,6 @@
 <template>
     <div class="w-full max-w-md mx-auto">
         <form @submit.prevent="handleSubmit" class="space-y-6">
-            <!-- Alerta de error general -->
             <div v-if="apiError" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -13,7 +12,6 @@
                 </div>
             </div>
 
-            <!-- Nombre y Apellido -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-[#6b3e26]">Nombre</label>
@@ -31,7 +29,6 @@
                 </div>
             </div>
 
-            <!-- Email -->
             <div>
                 <label for="email" class="block text-sm font-medium text-[#6b3e26]">Correo electrónico</label>
                 <input type="email" id="email" v-model="formData.email"
@@ -287,17 +284,20 @@ const handleSubmit = async () => {
 
         const data = await response.json();
 
+        if (data === "El usuario ya existe") {
+            apiError.value = "El usuario ya existe";
+            isSubmitting.value = false;
+            return;
+        }
+
         if (!response.ok) {
-            throw new Error(data.message || 'Error al registrar el usuario');
+            throw new Error(data.message);
         }
 
         showSuccessModal.value = true;
     } catch (error) {
-        if (error instanceof Error) {
-            apiError.value = error.message;
-        } else {
-            apiError.value = 'Ha ocurrido un error inesperado';
-        }
+        if (error instanceof Error) apiError.value = "Hubo un error al registrar el usuario. Por favor, inténtalo de nuevo.";
+        else apiError.value = "Hemos tenido problemas con el servidor. Por favor, inténtalo más tarde.";
     } finally {
         isSubmitting.value = false;
     }

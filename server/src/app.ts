@@ -4,6 +4,7 @@ import cors from "cors";
 import path from "path";
 import morgan from "morgan";
 import { multerError } from "./multer/multer";
+import apiLimiter from "./config/rate-limit";
 
 process.loadEnvFile();
 const { CLIENT_URL } = process.env as {
@@ -20,7 +21,7 @@ app.use(
 
 app.use(morgan("dev"));
 app.use(json());
-app.use("/api", router);
+app.use("/api", apiLimiter, router);
 app.use(multerError);
 app.use("/api/images", express.static(path.join(__dirname, "/images")));
 
