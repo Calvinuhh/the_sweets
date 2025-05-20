@@ -33,14 +33,16 @@ const userSchema = new Schema<User>(
     country_code: {
       type: String,
       required: true,
+      trim: true,
     },
     phone: {
       type: String,
-      required: true,
+      trim: true,
     },
     token: {
       type: String,
       default: null,
+      trim: true,
     },
     active: {
       type: Boolean,

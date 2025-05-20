@@ -1,3 +1,8 @@
+process.loadEnvFile();
+const { HEADER_N8N_AUTH_TOKEN } = process.env as {
+  HEADER_N8N_AUTH_TOKEN: string;
+};
+
 export const sendn8nEmailRegistration = async (
   email: string,
   name: string,
@@ -10,6 +15,7 @@ export const sendn8nEmailRegistration = async (
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          token: HEADER_N8N_AUTH_TOKEN,
         },
         body: JSON.stringify({ email, name, token }),
       }
