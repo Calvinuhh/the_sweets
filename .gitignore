@@ -19,6 +19,7 @@ node_modules
 .env
 images
 /client/tailwind.config.js
+email-templates
 
 .vscode/*
 !.vscode/extensions.json
