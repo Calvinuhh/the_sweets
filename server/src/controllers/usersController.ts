@@ -22,7 +22,7 @@ export const registerController = async (req: Request, res: Response) => {
       phone,
     });
 
-    res.status(201).json(result);
+    if (result) res.status(201).json("Usuario creado correctamente");
   } catch (error) {
     const err = error as Error;
     res.status(400).json({
