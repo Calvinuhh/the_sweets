@@ -1,4 +1,3 @@
-process.loadEnvFile();
 const { HEADER_N8N_AUTH_TOKEN } = process.env as {
   HEADER_N8N_AUTH_TOKEN: string;
 };
