@@ -10,7 +10,7 @@ export const sendn8nEmailRegistration = async (
 ) => {
   try {
     const response = await fetch(
-      "https://n8n-test-oj0t.onrender.com/webhook/user-email-activation",
+      "https://n8n.srv834803.hstgr.cloud/webhook/user-email-activation",
       {
         method: "POST",
         headers: {

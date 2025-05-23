@@ -17,6 +17,7 @@
 import RegisterForm from '~/components/clients/RegisterForm.vue';
 
 definePageMeta({
-    layout: "clients"
+    layout: "clients",
+    middleware: 'auth-guest'
 });
 </script>

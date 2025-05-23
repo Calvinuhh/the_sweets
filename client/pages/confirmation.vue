@@ -55,6 +55,10 @@ import { useRoute } from 'vue-router'
 
 const { public: { SERVER_URL } } = useRuntimeConfig()
 
+definePageMeta({
+    layout: "clients"
+})
+
 const route = useRoute()
 
 const loading = ref(true)

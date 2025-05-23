@@ -19,20 +19,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-                            <input v-model="formData.name" type="text" id="name" required
+                            <input v-model="formData.name" type="text" id="name" name="name" required
                                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
 
                         <div>
                             <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
-                            <input v-model.number="formData.price" type="number" id="price" min="1000" step="50"
-                                required
+                            <input v-model.number="formData.price" type="number" id="price" name="price" min="1000"
+                                step="50" required
                                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         </div>
 
                         <div>
                             <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-                            <select v-model="formData.type" id="type" required
+                            <select v-model="formData.type" id="type" name="type" required
                                 class="w-full h-[40px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                                 <option value="cobertura">Cobertura</option>
                                 <option value="relleno">Relleno</option>
@@ -131,22 +131,18 @@ const handleSubmit = async () => {
 
     try {
         isSubmitting.value = true;
-        // Cambio aquí: UpdateAddition ya es Partial<CreateAddition>
         const changes: UpdateAddition = {};
 
-        // Nombre (string)
         if (formData.name !== addition.value?.name) {
             changes.name = formData.name;
         }
 
-        // Precio (number). Convierto a number si viene como string:
         if (formData.price !== addition.value?.price) {
             changes.price = typeof formData.price === 'string'
                 ? Number(formData.price)
                 : formData.price;
         }
 
-        // Tipo (literal union). Aseguro que encaja en AdditionType
         if (formData.type !== addition.value?.type) {
             changes.type = formData.type as AdditionType;
         }

@@ -34,42 +34,47 @@
                     <form v-if="!isSubmitted" class="space-y-4" @submit.prevent="onSubmit">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre <span
+                                <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">Nombre <span
                                         class="text-red-500">*</span></label>
-                                <input type="text" v-model="formData.firstName"
+                                <input type="text" id="firstName" name="firstName" v-model="formData.firstName"
+                                    autocomplete="given-name"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                     :class="{ 'border-red-500': errors.firstName }" placeholder="Tu nombre" />
                                 <p v-if="errors.firstName" class="mt-1 text-sm text-red-600">{{ errors.firstName }}</p>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Apellido <span
-                                        class="text-red-500">*</span></label>
-                                <input type="text" v-model="formData.lastName"
+                                <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Apellido
+                                    <span class="text-red-500">*</span></label>
+                                <input type="text" id="lastName" name="lastName" v-model="formData.lastName"
+                                    autocomplete="family-name"
                                     class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                     :class="{ 'border-red-500': errors.lastName }" placeholder="Tu apellido" />
                                 <p v-if="errors.lastName" class="mt-1 text-sm text-red-600">{{ errors.lastName }}</p>
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Correo electrónico <span
-                                    class="text-red-500">*</span></label>
-                            <input type="email" v-model="formData.email"
+                            <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Correo
+                                electrónico <span class="text-red-500">*</span></label>
+                            <input type="email" id="contactEmail" name="contactEmail" v-model="formData.email"
+                                autocomplete="email"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                 :class="{ 'border-red-500': errors.email }" placeholder="ejemplo@correo.com" />
                             <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Número de contacto <span
-                                    class="text-red-500">*</span></label>
+                            <label for="contactPhone" class="block text-sm font-medium text-gray-700 mb-1">Número de
+                                contacto <span class="text-red-500">*</span></label>
                             <div class="flex gap-3">
                                 <div class="w-24">
-                                    <input type="text" v-model="formData.countryCode"
+                                    <input type="text" id="contactCountryCode" name="contactCountryCode"
+                                        v-model="formData.countryCode" autocomplete="tel-country-code"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                         :class="{ 'border-red-500': errors.countryCode }" placeholder="Ej: +57" />
                                     <p v-if="errors.countryCode" class="mt-1 text-sm text-red-600">*</p>
                                 </div>
                                 <div class="flex-1">
-                                    <input type="tel" v-model="formData.phone"
+                                    <input type="tel" id="contactPhone" name="contactPhone" v-model="formData.phone"
+                                        autocomplete="tel-national"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                         :class="{ 'border-red-500': errors.phone }" placeholder="318 123 4567" />
                                     <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
@@ -78,9 +83,9 @@
                             <p class="text-xs text-gray-500 mt-1">Incluye tu código de país (Ej: +57 para Colombia)</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tu mensaje <span
-                                    class="text-red-500">*</span></label>
-                            <textarea rows="4" v-model="formData.message"
+                            <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-1">Tu mensaje
+                                <span class="text-red-500">*</span></label>
+                            <textarea rows="4" id="contactMessage" name="contactMessage" v-model="formData.message"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
                                 :class="{ 'border-red-500': errors.message }"
                                 placeholder="¿En qué podemos ayudarte?"></textarea>

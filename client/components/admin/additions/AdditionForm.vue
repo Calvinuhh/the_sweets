@@ -1,20 +1,21 @@
 <template>
     <form @submit.prevent="handleSubmit" class="space-y-4">
         <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">Nombre *</label>
-            <input v-model="form.name" type="text" id="name" required
+            <label for="additionName" class="block text-sm font-medium text-gray-700">Nombre *</label>
+            <input v-model="form.name" type="text" id="additionName" name="additionName" required
                 class="mt-1 block w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
         </div>
 
         <div>
-            <label for="price" class="block text-sm font-medium text-gray-700">Precio *</label>
-            <input v-model.number="form.price" type="number" id="price" min="1000" step="50" required
+            <label for="additionPrice" class="block text-sm font-medium text-gray-700">Precio *</label>
+            <input v-model.number="form.price" type="number" id="additionPrice" name="additionPrice" min="1000"
+                step="50" required
                 class="mt-1 block w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
         </div>
 
         <div>
-            <label for="type" class="block text-sm font-medium text-gray-700">Tipo *</label>
-            <select v-model="form.type" id="type" required
+            <label for="additionType" class="block text-sm font-medium text-gray-700">Tipo *</label>
+            <select v-model="form.type" id="additionType" name="additionType" required
                 class="mt-1 block w-full h-[40px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                 <option value="cobertura">Cobertura</option>
                 <option value="relleno">Relleno</option>

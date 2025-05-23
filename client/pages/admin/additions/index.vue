@@ -16,6 +16,6 @@
 import AdditionTable from "~/components/admin/additions/AdditionTable.vue";
 
 definePageMeta({
-  layout: 'admin',
+  layout: 'admin'
 });
 </script>

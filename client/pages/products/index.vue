@@ -12,6 +12,7 @@ import Sidebar from '~/components/clients/Sidebar.vue'
 import Desserts from '~/components/clients/Desserts.vue'
 
 definePageMeta({
-    layout: "clients"
+    layout: "clients",
+    middleware: ['auth-client']
 })
 </script>
