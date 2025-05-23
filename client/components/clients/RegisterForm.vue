@@ -1,6 +1,6 @@
 <template>
     <div class="w-full max-w-md mx-auto">
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form @submit.prevent="onSubmit" class="space-y-6">
             <div v-if="apiError" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -15,23 +15,24 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-[#6b3e26]">Nombre</label>
-                    <input type="text" id="name" v-model="formData.name"
+                    <input type="text" id="name" name="name" v-model="formData.name" autocomplete="given-name"
                         class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                         :class="{ 'border-red-500': errors.name }" />
                     <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name }}</p>
                 </div>
                 <div>
-                    <label for="lastname" class="block text-sm font-medium text-[#6b3e26]">Apellido</label>
-                    <input type="text" id="lastname" v-model="formData.lastname"
+                    <label for="lastName" class="block text-sm font-medium text-[#6b3e26]">Apellido</label>
+                    <input type="text" id="lastName" name="lastName" v-model="formData.lastName"
+                        autocomplete="family-name"
                         class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                        :class="{ 'border-red-500': errors.lastname }" />
-                    <p v-if="errors.lastname" class="mt-1 text-sm text-red-600">{{ errors.lastname }}</p>
+                        :class="{ 'border-red-500': errors.lastName }" />
+                    <p v-if="errors.lastName" class="mt-1 text-sm text-red-600">{{ errors.lastName }}</p>
                 </div>
             </div>
 
             <div>
                 <label for="email" class="block text-sm font-medium text-[#6b3e26]">Correo electrónico</label>
-                <input type="email" id="email" v-model="formData.email"
+                <input type="email" id="email" name="email" v-model="formData.email" autocomplete="email"
                     class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                     :class="{ 'border-red-500': errors.email }" />
                 <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
@@ -41,29 +42,31 @@
                 <label for="phone" class="block text-sm font-medium text-[#6b3e26]">Teléfono</label>
                 <div class="mt-1 grid grid-cols-3 gap-2">
                     <div>
-                        <label for="country_code" class="block text-xs font-medium text-gray-500">Código país</label>
-                        <input type="text" id="country_code" v-model="formData.country_code"
+                        <label for="countryCode" class="block text-xs font-medium text-gray-500">Código país</label>
+                        <input type="text" id="countryCode" name="countryCode" v-model="formData.countryCode"
+                            autocomplete="tel-country-code"
                             class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500"
-                            :class="{ 'border-red-500': errors.country_code }" placeholder="57" maxlength="4" />
+                            :class="{ 'border-red-500': errors.countryCode }" placeholder="57" maxlength="4" />
                     </div>
                     <div class="col-span-2">
                         <label for="phone" class="block text-xs font-medium text-gray-500">Número</label>
-                        <input type="tel" id="phone" v-model="formData.phone"
+                        <input type="tel" id="phone" name="phone" v-model="formData.phone" autocomplete="tel-national"
                             class="block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                             :class="{ 'border-red-500': errors.phone }" placeholder="Número de teléfono" />
                     </div>
                 </div>
-                <p v-if="errors.country_code" class="mt-1 text-sm text-red-600">{{ errors.country_code }}</p>
+                <p v-if="errors.countryCode" class="mt-1 text-sm text-red-600">{{ errors.countryCode }}</p>
                 <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
             </div>
 
             <div>
                 <label for="password" class="block text-sm font-medium text-[#6b3e26]">Contraseña</label>
                 <div class="relative mt-1">
-                    <input :type="showPassword ? 'text' : 'password'" id="password" v-model="formData.password"
+                    <input :type="showPassword ? 'text' : 'password'" id="password" name="password"
+                        v-model="formData.password" autocomplete="new-password"
                         class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                         :class="{ 'border-red-500': errors.password }" />
-                    <button type="button" @click="showPassword = !showPassword"
+                    <button type="button" @click="showPassword = !showPassword" aria-label="Mostrar/ocultar contraseña"
                         class="absolute inset-y-0 right-0 pr-3 flex items-center">
                         <Icon :name="showPassword ? 'mdi:eye-off' : 'mdi:eye'" class="h-5 w-5 text-gray-400" />
                     </button>
@@ -77,11 +80,12 @@
                 <label for="confirmPassword" class="block text-sm font-medium text-[#6b3e26]">Confirmar
                     contraseña</label>
                 <div class="relative mt-1">
-                    <input :type="showConfirmPassword ? 'text' : 'password'" id="confirmPassword"
-                        v-model="formData.confirmPassword"
+                    <input :type="showConfirmPassword ? 'text' : 'password'" id="confirmPassword" name="confirmPassword"
+                        v-model="formData.confirmPassword" autocomplete="new-password"
                         class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                         :class="{ 'border-red-500': errors.confirmPassword }" />
                     <button type="button" @click="showConfirmPassword = !showConfirmPassword"
+                        aria-label="Mostrar/ocultar confirmación de contraseña"
                         class="absolute inset-y-0 right-0 pr-3 flex items-center">
                         <Icon :name="showConfirmPassword ? 'mdi:eye-off' : 'mdi:eye'" class="h-5 w-5 text-gray-400" />
                     </button>
@@ -153,158 +157,33 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useRegisterForm } from '~/composables/useRegisterForm'
 
-const { public: { SERVER_URL } } = useRuntimeConfig();
+const router = useRouter()
 
-const router = useRouter();
+const {
+    formData,
+    errors,
+    isSubmitting,
+    apiError,
+    showSuccessModal,
+    submitForm,
+    closeSuccessModal,
+} = useRegisterForm()
 
-const formData = reactive({
-    name: '',
-    lastname: '',
-    email: '',
-    country_code: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    acceptTerms: false
-});
+const formWasSubmitted = ref(false)
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 
-const errors = reactive({
-    name: '',
-    lastname: '',
-    email: '',
-    country_code: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    acceptTerms: ''
-});
-
-const isSubmitting = ref(false);
-const apiError = ref('');
-const showPassword = ref(false);
-const showConfirmPassword = ref(false);
-const showSuccessModal = ref(false);
-
-const validateForm = () => {
-    let isValid = true;
-
-    Object.keys(errors).forEach(key => {
-        errors[key as keyof typeof errors] = '';
-    });
-
-    if (!formData.name) {
-        errors.name = 'El nombre es obligatorio';
-        isValid = false;
-    } else if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(formData.name)) {
-        errors.name = 'El nombre solo puede contener letras, números y espacios';
-        isValid = false;
-    }
-
-    if (!formData.lastname) {
-        errors.lastname = 'El apellido es obligatorio';
-        isValid = false;
-    } else if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(formData.lastname)) {
-        errors.lastname = 'El apellido solo puede contener letras, números y espacios';
-        isValid = false;
-    }
-
-    if (!formData.email) {
-        errors.email = 'El correo electrónico es obligatorio';
-        isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        errors.email = 'El correo electrónico no es válido';
-        isValid = false;
-    }
-
-    if (!formData.country_code) {
-        errors.country_code = 'El código de país es obligatorio';
-        isValid = false;
-    }
-
-    if (!formData.phone) {
-        errors.phone = 'El teléfono es obligatorio';
-        isValid = false;
-    } else if (formData.phone.length < 10 || formData.phone.length > 15) {
-        errors.phone = 'El teléfono debe tener entre 10 y 15 dígitos';
-        isValid = false;
-    } else if (!/^\d+$/.test(formData.phone)) {
-        errors.phone = 'El teléfono solo debe contener números';
-        isValid = false;
-    }
-
-    if (!formData.password) {
-        errors.password = 'La contraseña es obligatoria';
-        isValid = false;
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(formData.password)) {
-        errors.password = 'La contraseña no cumple con los requisitos de seguridad';
-        isValid = false;
-    }
-
-    if (!formData.confirmPassword) {
-        errors.confirmPassword = 'Debes confirmar tu contraseña';
-        isValid = false;
-    } else if (formData.password !== formData.confirmPassword) {
-        errors.confirmPassword = 'Las contraseñas no coinciden';
-        isValid = false;
-    }
-
-    if (!formData.acceptTerms) {
-        errors.acceptTerms = 'Debes aceptar los términos y condiciones';
-        isValid = false;
-    }
-
-    return isValid;
-};
-
-
-const handleSubmit = async () => {
-    if (!validateForm()) return;
-
-    isSubmitting.value = true;
-    apiError.value = '';
-
-    try {
-        const response = await fetch(`${SERVER_URL}/users/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: formData.name,
-                lastname: formData.lastname,
-                email: formData.email,
-                country_code: formData.country_code,
-                phone: formData.phone,
-                password: formData.password,
-            }),
-        });
-
-        const data = await response.json();
-
-        if (data === "El usuario ya existe") {
-            apiError.value = "El usuario ya existe";
-            isSubmitting.value = false;
-            return;
-        }
-
-        if (!response.ok) {
-            throw new Error(data.message);
-        }
-
-        showSuccessModal.value = true;
-    } catch (error) {
-        if (error instanceof Error) apiError.value = "Hubo un error al registrar el usuario. Por favor, inténtalo de nuevo.";
-        else apiError.value = "Hemos tenido problemas con el servidor. Por favor, inténtalo más tarde.";
-    } finally {
-        isSubmitting.value = false;
-    }
-};
+const onSubmit = async () => {
+    formWasSubmitted.value = true
+    await submitForm()
+}
 
 const goToHome = () => {
-    showSuccessModal.value = false;
-    router.push('/');
-};
+    closeSuccessModal()
+    router.push('/user/login')
+}
 </script>

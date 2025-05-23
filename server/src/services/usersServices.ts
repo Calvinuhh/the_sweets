@@ -1,15 +1,20 @@
-import { UserLogin, UserRegistration } from "../types/User";
+import { UserLogin, UserRegistration, UserUpdate } from "../types/User";
 import User from "../models/User";
-import { hash } from "bcrypt";
+import { hash, compare } from "bcrypt";
 import { generateRandomToken } from "../utils/tokenGenerator";
 import { sendn8nEmailRegistration } from "../utils/n8n";
+import { sign } from "jsonwebtoken";
+
+const { JWT_SECRET } = process.env as {
+  JWT_SECRET: string;
+};
 
 export const register = async (userData: UserRegistration) => {
   const { name, lastname, email, password, country_code, phone } = userData;
 
   const user = await User.findOne({ email });
 
-  if (user) return "El usuario ya existe";
+  if (user) throw Error("El usuario ya existe");
 
   const token = generateRandomToken();
 
@@ -58,6 +63,57 @@ export const confirmRegistration = async (token: string, email: string) => {
 
 export const login = async (userData: UserLogin) => {
   const { email, password } = userData;
+
+  const user = await User.findOne({ email });
+  if (!user) throw Error("Credenciales incorrectas");
+
+  if (!user.active)
+    throw Error(
+      "Usuario no activado. Por favor verifica tu correo electrónico"
+    );
+
+  const isPasswordValid = await compare(password, user.password);
+  if (!isPasswordValid) throw Error("Credenciales incorrectas");
+
+  const token = sign({ _id: user._id }, JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  return {
+    token,
+    user: {
+      name: user.name,
+      email: user.email,
+      lastname: user.lastname,
+      country_code: user.country_code,
+      phone: user.phone,
+    },
+  };
 };
 
-export const getUserById = async (_id: string) => {};
+export const getUserById = async (_id: string) => {
+  const user = await User.findById(_id).select("-password -token -active");
+
+  if (!user) throw Error("Usuario no encontrado");
+  return user;
+};
+
+export const patchUserData = async (id: string, userData: UserUpdate) => {
+  const { country_code, lastname, name, phone } = userData;
+
+  const updateFields: Partial<UserUpdate> = {};
+
+  if (name !== undefined) updateFields.name = name;
+  if (lastname !== undefined) updateFields.lastname = lastname;
+  if (country_code !== undefined) updateFields.country_code = country_code;
+  if (phone !== undefined) updateFields.phone = phone;
+
+  const user = await User.findById(id);
+  if (!user) throw Error("Usuario no encontrado");
+
+  const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
+    new: true,
+  }).select("-password -token -active");
+
+  return updatedUser;
+};

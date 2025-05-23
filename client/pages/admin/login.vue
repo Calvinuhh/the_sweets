@@ -4,7 +4,10 @@
 
 <script lang="ts" setup>
 import LoginForm from "~/components/admin/LoginForm.vue"
-import { onMounted } from 'vue'
+
+definePageMeta({
+  middleware: 'auth-guest'
+})
 
 onMounted(() => {
   const token = localStorage.getItem('token');

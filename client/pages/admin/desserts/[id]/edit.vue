@@ -22,19 +22,19 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
-              <input v-model="formData.name" type="text" id="name" required
+              <input v-model="formData.name" type="text" id="name" name="name" required
                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
             <div>
               <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Precio *</label>
-              <input v-model.number="formData.price" type="number" id="price" min="1000" step="50" required
+              <input v-model.number="formData.price" type="number" id="price" name="price" min="1000" step="50" required
                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
             <div>
               <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-              <select v-model="formData.type" id="type" required
+              <select v-model="formData.type" id="type" name="type" required
                 class="w-full h-[40px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 <option value="torta">Torta</option>
                 <option value="postre_frio">Postre Frío</option>
@@ -45,7 +45,7 @@
 
             <div>
               <label for="flavor" class="block text-sm font-medium text-gray-700 mb-1">Sabor *</label>
-              <select v-model="formData.flavor" id="flavor" required
+              <select v-model="formData.flavor" id="flavor" name="flavor" required
                 class="w-full h-[40px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 <option value="chocolate">Chocolate</option>
                 <option value="vainilla">Vainilla</option>
@@ -55,20 +55,20 @@
 
             <div>
               <label for="portions" class="block text-sm font-medium text-gray-700 mb-1">Porciones *</label>
-              <input v-model.number="formData.portions" type="number" id="portions" min="1" required
+              <input v-model.number="formData.portions" type="number" id="portions" name="portions" min="1" required
                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
 
             <div>
               <label for="levels" class="block text-sm font-medium text-gray-700 mb-1">Niveles *</label>
-              <input v-model.number="formData.levels" type="number" id="levels" min="1" required
+              <input v-model.number="formData.levels" type="number" id="levels" name="levels" min="1" required
                 class="w-full h-[30px] p-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+              <label for="active" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
               <div class="mt-1">
                 <label class="inline-flex items-center">
-                  <input v-model="formData.active" type="checkbox"
+                  <input v-model="formData.active" id="active" name="active" type="checkbox"
                     class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                   <span class="ml-2">Activo</span>
                 </label>

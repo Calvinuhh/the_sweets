@@ -51,7 +51,7 @@
                                         <li v-for="add in item.additions" :key="add.id">
                                             + {{ add.name }} <span v-if="add.price">(${{
                                                 add.price.toLocaleString()
-                                                }})</span>
+                                            }})</span>
                                         </li>
                                     </ul>
                                     <div class="text-xs text-gray-500 mt-1">
@@ -115,6 +115,7 @@ const additionsTotal = computed(() => {
 const total = computed(() => subtotal.value + additionsTotal.value)
 
 definePageMeta({
-    layout: "clients"
+    layout: "clients",
+    middleware: 'auth-required'
 })
 </script>

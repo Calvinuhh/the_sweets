@@ -36,8 +36,10 @@
                     <span class="text-2xl font-bold text-gray-900">Precio: ${{ dessert.price.toLocaleString() }}</span>
                 </div>
                 <div v-if="isRollo || isGalleta">
-                    <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de unidades</label>
-                    <select v-model="selectedUnits" class="w-full border rounded p-2">
+                    <label for="productUnits" class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de
+                        unidades</label>
+                    <select v-model="selectedUnits" id="productUnits" name="productUnits"
+                        class="w-full border rounded p-2">
                         <option value="1">1</option>
                         <option value="2">2</option>
                         <option value="3">+3 (Conversar con The Sweet S para confirmación)</option>
@@ -45,34 +47,41 @@
                 </div>
                 <template v-else>
                     <div>
-                        <label class="block font-semibold mb-2 text-[#6b3e26]">Tipo de compra</label>
-                        <select v-model="purchaseType" class="w-full border rounded p-2">
+                        <label for="purchaseType" class="block font-semibold mb-2 text-[#6b3e26]">Tipo de compra</label>
+                        <select v-model="purchaseType" id="purchaseType" name="purchaseType"
+                            class="w-full border rounded p-2">
                             <option value="unidad">Por unidad</option>
                             <option value="porciones">Por porciones</option>
                         </select>
                     </div>
                     <div v-if="purchaseType === 'unidad'">
-                        <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de unidades</label>
-                        <select v-model="selectedUnits" class="w-full border rounded p-2">
+                        <label for="selectedUnits" class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de
+                            unidades</label>
+                        <select v-model="selectedUnits" id="selectedUnits" name="selectedUnits"
+                            class="w-full border rounded p-2">
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">+3 (Conversar con The Sweet S para confirmación)</option>
                         </select>
                     </div>
                     <div v-if="purchaseType === 'porciones' && dessert.portions && dessert.portions > 1">
-                        <label class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de porciones</label>
-                        <select v-model="selectedPortions" class="w-full border rounded p-2">
+                        <label for="selectedPortions" class="block font-semibold mb-2 text-[#6b3e26]">Cantidad de
+                            porciones</label>
+                        <select v-model="selectedPortions" id="selectedPortions" name="selectedPortions"
+                            class="w-full border rounded p-2">
                             <option v-for="n in maxPorciones" :key="n" :value="n">{{ n }}</option>
                         </select>
                     </div>
                     <div v-if="purchaseType !== 'porciones'">
-                        <label class="block font-semibold mb-2 text-[#6b3e26]">
-                            <input type="checkbox" v-model="showLevels" class="mr-2 accent-pink-500" />
+                        <label for="showLevels" class="block font-semibold mb-2 text-[#6b3e26]">
+                            <input type="checkbox" id="showLevels" name="showLevels" v-model="showLevels"
+                                class="mr-2 accent-pink-500" />
                             ¿Quieres niveles en tu torta?
                         </label>
                         <div v-if="showLevels">
-                            <label class="block font-semibold mb-2 text-[#6b3e26]">Niveles</label>
-                            <select v-model="selectedLevel" class="w-full border rounded p-2">
+                            <label for="selectedLevel" class="block font-semibold mb-2 text-[#6b3e26]">Niveles</label>
+                            <select v-model="selectedLevel" id="selectedLevel" name="selectedLevel"
+                                class="w-full border rounded p-2">
                                 <option value="2">2</option>
                                 <option value="+3">+3 (Conversar con The Sweet S para confirmación)</option>
                             </select>
@@ -83,9 +92,9 @@
                     <label class="block font-semibold mb-2 text-[#6b3e26]">Adiciones disponibles</label>
                     <div class="flex flex-col gap-2">
                         <label v-for="addition in dessert.additions" :key="addition._id"
-                            class="flex items-center gap-2">
-                            <input type="checkbox" :value="addition._id" v-model="selectedAdditions"
-                                class="accent-pink-500" />
+                            :for="`addition-${addition._id}`" class="flex items-center gap-2">
+                            <input type="checkbox" :id="`addition-${addition._id}`" :value="addition._id"
+                                v-model="selectedAdditions" class="accent-pink-500" />
                             <span>{{ addition.name }} (+${{ addition.price }})</span>
                         </label>
                     </div>
@@ -238,6 +247,7 @@ onMounted(async () => {
 })
 
 definePageMeta({
-    layout: "clients"
+    layout: "clients",
+    middleware: 'auth-required'
 })
 </script>

@@ -14,3 +14,6 @@ export interface User {
 
 export type UserRegistration = Omit<User, "_id" | "active" | "token">;
 export type UserLogin = Pick<User, "email" | "password">;
+export type UserUpdate = Partial<
+  Omit<User, "_id" | "active" | "token" | "password" | "email">
+>;
