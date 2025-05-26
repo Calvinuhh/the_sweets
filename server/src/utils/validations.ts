@@ -56,6 +56,13 @@ export const validateEmail = (email: string) => {
 };
 
 export const validatePhone = (phone: string) => {
+  if (!/^\d{10,15}$/.test(phone))
+    throw Error(
+      "El teléfono debe contener entre 10 y 15 dígitos y debe ser un numero"
+    );
+};
+
+export const validateUserPhone = (phone: string) => {
   if (!/^\d{10}$/.test(phone))
     throw Error("El teléfono debe contener 10 dígitos y debe ser un numero");
 };

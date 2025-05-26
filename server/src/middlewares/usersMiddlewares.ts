@@ -5,6 +5,7 @@ import {
   validateMaxLength,
   validateName,
   validatePassword,
+  validateUserPhone,
 } from "../utils/validations";
 import { verify } from "jsonwebtoken";
 
@@ -56,6 +57,7 @@ export const validateUserRegistration = (
     }
     validatePassword(password);
     validateEmail(email);
+    validateUserPhone(phone); // Usar la validación específica para usuarios
 
     next();
   } catch (error) {
@@ -177,6 +179,49 @@ export const patchUserData = (
     next();
   } catch (error) {
     const err = error as Error;
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+export const validateContactForm = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { firstName, lastName, countryCode, phone, email, message } =
+      req.body;
+
+    if (!firstName) throw Error("El campo 'firstName' es requerido");
+    if (!lastName) throw Error("El campo 'lastName' es requerido");
+    if (!countryCode) throw Error("El campo 'countryCode' es requerido");
+    if (!phone) throw Error("El campo 'phone' es requerido");
+    if (!email) throw Error("El campo 'email' es requerido");
+    if (!message) throw Error("El campo 'message' es requerido");
+
+    validateName(firstName);
+    validateName(lastName);
+    validateEmail(email);
+
+    if (countryCode.length < 2)
+      throw Error("El campo 'countryCode' debe tener al menos 2 caracteres");
+    if (countryCode.length > 5)
+      throw Error("El campo 'countryCode' no puede tener más de 5 caracteres");
+
+    const cleanPhone = phone.replace(/\s+/g, "");
+    if (!/^\d{10,15}$/.test(cleanPhone))
+      throw Error("El campo 'phone' debe tener entre 10 y 15 dígitos");
+
+    validateMaxLength(firstName, 100, "firstName");
+    validateMaxLength(lastName, 100, "lastName");
+    validateMaxLength(message, 1000, "message");
+
+    next();
+  } catch (error) {
+    const err = error as Error;
+
     res.status(400).json({
       message: err.message,
     });

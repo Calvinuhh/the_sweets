@@ -4,6 +4,7 @@ import {
   login,
   getUserById,
   patchUserData,
+  contactForm,
 } from "../services/usersServices";
 import { Request, Response } from "express";
 import { UserRegistration } from "../types/User";
@@ -88,6 +89,34 @@ export const patchUserDataController = async (req: Request, res: Response) => {
       .status(200)
       .json(
         await patchUserData(userId, { name, lastname, country_code, phone })
+      );
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+export const sendContactFormDataController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { firstName, lastName, countryCode, phone, email, message } =
+      req.body;
+
+    res
+      .status(200)
+      .json(
+        await contactForm(
+          firstName,
+          lastName,
+          countryCode,
+          phone,
+          email,
+          message
+        )
       );
   } catch (error) {
     const err = error as Error;

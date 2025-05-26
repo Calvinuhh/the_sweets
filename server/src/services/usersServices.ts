@@ -2,7 +2,10 @@ import { UserLogin, UserRegistration, UserUpdate } from "../types/User";
 import User from "../models/User";
 import { hash, compare } from "bcrypt";
 import { generateRandomToken } from "../utils/tokenGenerator";
-import { sendn8nEmailRegistration } from "../utils/n8n";
+import {
+  sendn8nEmailRegistration,
+  sendn8nEmailContactForm,
+} from "../utils/n8n";
 import { sign } from "jsonwebtoken";
 
 const { JWT_SECRET } = process.env as {
@@ -116,4 +119,22 @@ export const patchUserData = async (id: string, userData: UserUpdate) => {
   }).select("-password -token -active");
 
   return updatedUser;
+};
+
+export const contactForm = async (
+  firstName: string,
+  lastName: string,
+  countryCode: string,
+  phone: string,
+  email: string,
+  message: string
+) => {
+  return await sendn8nEmailContactForm(
+    firstName,
+    lastName,
+    countryCode,
+    phone,
+    email,
+    message
+  );
 };
