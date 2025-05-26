@@ -41,7 +41,7 @@ export const sendn8nEmailContactForm = async (
 ) => {
   try {
     const response = await fetch(
-      "https://n8n.srv834803.hstgr.cloud/webhook-test/contact-form-dev",
+      "https://n8n.srv834803.hstgr.cloud/webhook/contact-form",
       {
         method: "POST",
         headers: {
