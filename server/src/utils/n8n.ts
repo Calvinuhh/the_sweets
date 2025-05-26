@@ -30,3 +30,42 @@ export const sendn8nEmailRegistration = async (
     throw Error(`Error al enviar el correo: ${error}`);
   }
 };
+
+export const sendn8nEmailContactForm = async (
+  firstName: string,
+  lastName: string,
+  countryCode: string,
+  phone: string,
+  email: string,
+  message: string
+) => {
+  try {
+    const response = await fetch(
+      "https://n8n.srv834803.hstgr.cloud/webhook-test/contact-form-dev",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          token: HEADER_N8N_AUTH_TOKEN,
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          countryCode,
+          phone,
+          email,
+          message,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw Error(`Error en el webhook: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw Error(`Error al enviar el correo: ${error}`);
+  }
+};

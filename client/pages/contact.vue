@@ -69,7 +69,7 @@
                                     <input type="text" id="contactCountryCode" name="contactCountryCode"
                                         v-model="formData.countryCode" autocomplete="tel-country-code"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-400 focus:border-pink-400"
-                                        :class="{ 'border-red-500': errors.countryCode }" placeholder="Ej: +57" />
+                                        :class="{ 'border-red-500': errors.countryCode }" placeholder="Ej: 57" />
                                     <p v-if="errors.countryCode" class="mt-1 text-sm text-red-600">*</p>
                                 </div>
                                 <div class="flex-1">
@@ -80,7 +80,7 @@
                                     <p v-if="errors.phone" class="mt-1 text-sm text-red-600">{{ errors.phone }}</p>
                                 </div>
                             </div>
-                            <p class="text-xs text-gray-500 mt-1">Incluye tu código de país (Ej: +57 para Colombia)</p>
+                            <p class="text-xs text-gray-500 mt-1">Incluye tu código de país (Ej: 57 para Colombia)</p>
                         </div>
                         <div>
                             <label for="contactMessage" class="block text-sm font-medium text-gray-700 mb-1">Tu mensaje

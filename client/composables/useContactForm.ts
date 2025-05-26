@@ -30,8 +30,12 @@ export function useContactForm() {
   };
 
   const validatePhone = (phone: string): boolean => {
-    const phoneRegex = /^\d{7,15}$/;
+    const phoneRegex = /^\d{10,15}$/;
     return phoneRegex.test(phone.replace(/\s+/g, ""));
+  };
+
+  const validateCountryCode = (code: string): boolean => {
+    return code.length >= 2 && code.length <= 5;
   };
 
   const validateForm = (): boolean => {
@@ -53,12 +57,15 @@ export function useContactForm() {
 
     if (!formData.value.countryCode.trim()) {
       newErrors.countryCode = "El código de país es requerido";
+    } else if (!validateCountryCode(formData.value.countryCode)) {
+      newErrors.countryCode =
+        "El código de país debe tener entre 2 y 5 caracteres";
     }
 
     if (!formData.value.phone.trim()) {
       newErrors.phone = "El número telefónico es requerido";
     } else if (!validatePhone(formData.value.phone)) {
-      newErrors.phone = "Por favor ingresa un número telefónico válido";
+      newErrors.phone = "El número telefónico debe tener entre 10 y 15 dígitos";
     }
 
     if (!formData.value.message.trim()) {
@@ -68,6 +75,10 @@ export function useContactForm() {
     errors.value = newErrors;
     return Object.keys(newErrors).length === 0;
   };
+
+  const {
+    public: { SERVER_URL },
+  } = useRuntimeConfig();
 
   const submitForm = async () => {
     if (validateForm()) {
@@ -79,28 +90,23 @@ export function useContactForm() {
           firstName: formData.value.firstName,
           lastName: formData.value.lastName,
           email: formData.value.email,
-          phone: `${formData.value.countryCode} ${formData.value.phone}`,
+          countryCode: formData.value.countryCode,
+          phone: formData.value.phone,
           message: formData.value.message,
           timestamp: new Date().toISOString(),
         };
 
-        const response = await fetch(
-          "https://n8n.srv834803.hstgr.cloud/webhook-test/contact-form",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(dataToSend),
-          }
-        );
+        const response = await fetch(`${SERVER_URL}/users/contact-form`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataToSend),
+        });
 
         if (!response.ok) {
           throw new Error(`Error en el envío: ${response.statusText}`);
         }
-
-        const result = await response.json();
-        console.log("Formulario enviado con éxito:", result);
 
         isSubmitted.value = true;
 

@@ -5,6 +5,7 @@ import {
   loginController,
   getUserByIdController,
   patchUserDataController,
+  sendContactFormDataController,
 } from "../../controllers/usersController";
 import {
   validateUserRegistration,
@@ -12,6 +13,7 @@ import {
   validateLogin,
   searchUserByIdWithAuthorization,
   patchUserData,
+  validateContactForm,
 } from "../../middlewares/usersMiddlewares";
 
 const usersRouter: Router = Router();
@@ -37,6 +39,12 @@ usersRouter.patch(
   searchUserByIdWithAuthorization,
   patchUserData,
   patchUserDataController
+);
+
+usersRouter.post(
+  "/contact-form",
+  validateContactForm,
+  sendContactFormDataController
 );
 
 export default usersRouter;
