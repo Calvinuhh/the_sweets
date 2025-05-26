@@ -84,9 +84,8 @@ export function useContactForm() {
           timestamp: new Date().toISOString(),
         };
 
-        // Cambiar la URL al webhook de n8n
         const response = await fetch(
-          "https://n8n.srv834803.hstgr.cloud/webhook/user-email-activation",
+          "https://n8n.srv834803.hstgr.cloud/webhook-test/contact-form-dev",
           {
             method: "POST",
             headers: {
