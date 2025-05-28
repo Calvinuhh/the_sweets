@@ -1,15 +1,14 @@
-import { ObjectId } from "mongoose";
-
 export interface User {
-  _id: ObjectId;
+  _id?: string;
   name: string;
   lastname: string;
   email: string;
-  password: string;
-  country_code: string;
-  phone: string;
+  password?: string;
+  googleId?: string;
+  country_code?: string;
+  phone?: string;
   token?: string | null;
-  active: boolean;
+  active?: boolean;
 }
 
 export type UserRegistration = Omit<User, "_id" | "active" | "token">;

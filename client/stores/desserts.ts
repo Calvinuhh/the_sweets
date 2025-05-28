@@ -29,7 +29,7 @@ export const useDessertsStore = defineStore("desserts", {
 
         this.desserts = await dessertsApi.fetchAllDesserts(type);
       } catch (error: any) {
-        this.error = error.data?.message;
+        this.error = error.data?.message || "Error al cargar postres";
       } finally {
         this.loading = false;
       }
@@ -54,7 +54,7 @@ export const useDessertsStore = defineStore("desserts", {
         this.desserts.unshift(newDessert);
         return newDessert;
       } catch (error: any) {
-        this.error = error.message;
+        this.error = error.message || "Error al crear postre";
         throw error;
       } finally {
         this.loading = false;
@@ -68,7 +68,7 @@ export const useDessertsStore = defineStore("desserts", {
         this.error = null;
         this.currentDessert = await dessertsApi.getDessertById(id);
       } catch (error: any) {
-        this.error = error.message;
+        this.error = error.message || "Error al cargar postre";
         throw error;
       } finally {
         this.loading = false;

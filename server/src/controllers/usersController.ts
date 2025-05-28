@@ -5,6 +5,7 @@ import {
   getUserById,
   patchUserData,
   contactForm,
+  googleLogin,
 } from "../services/usersServices";
 import { Request, Response } from "express";
 import { UserRegistration } from "../types/User";
@@ -118,6 +119,20 @@ export const sendContactFormDataController = async (
           message
         )
       );
+  } catch (error) {
+    const err = error as Error;
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+export const googleLoginController = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+
+    const result = await googleLogin(token);
+    res.status(200).json(result);
   } catch (error) {
     const err = error as Error;
     res.status(400).json({

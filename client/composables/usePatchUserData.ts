@@ -30,9 +30,9 @@ export const usePatchUserData = () => {
       }
 
       const config = useRuntimeConfig();
-      const serverUrl = config.public.serverUrl;
+      const serverUrl = config.public.SERVER_URL;
 
-      const response = await $fetch(`${serverUrl}/api/users/user`, {
+      await $fetch(`${serverUrl}/users/user`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -52,7 +52,6 @@ export const usePatchUserData = () => {
       showSuccess("Datos actualizados correctamente");
       return true;
     } catch (error: any) {
-      console.error("Error al actualizar datos:", error);
       showError(error?.data?.message || "Error al actualizar los datos");
       return false;
     } finally {

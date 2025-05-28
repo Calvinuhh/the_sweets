@@ -1,5 +1,18 @@
 <template>
     <div class="w-full max-w-md mx-auto">
+        <div class="mb-6">
+            <GoogleSignInButton />
+        </div>
+
+        <div class="relative mb-6">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">O regístrate con email</span>
+            </div>
+        </div>
+
         <form @submit.prevent="onSubmit" class="space-y-6">
             <div v-if="apiError" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
                 <div class="flex">
@@ -160,6 +173,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useRegisterForm } from '~/composables/useRegisterForm'
+import GoogleSignInButton from './GoogleSignInButton.vue'
 
 const router = useRouter()
 

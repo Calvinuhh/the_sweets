@@ -6,6 +6,7 @@ import {
   getUserByIdController,
   patchUserDataController,
   sendContactFormDataController,
+  googleLoginController,
 } from "../../controllers/usersController";
 import {
   validateUserRegistration,
@@ -14,6 +15,7 @@ import {
   searchUserByIdWithAuthorization,
   patchUserData,
   validateContactForm,
+  validateGoogleLogin,
 } from "../../middlewares/usersMiddlewares";
 
 const usersRouter: Router = Router();
@@ -33,6 +35,8 @@ usersRouter.post("/login", validateLogin, loginController);
 //   searchUserByIdWithAuthorization,
 //   getUserByIdController
 // );
+
+usersRouter.post("/google-login", validateGoogleLogin, googleLoginController);
 
 usersRouter.patch(
   "/user",

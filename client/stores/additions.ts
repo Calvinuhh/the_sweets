@@ -31,8 +31,7 @@ export const useAdditionsStore = defineStore("additions", {
         const data = await additionsApi.fetchAllAdditions(type);
         this.additions = Array.isArray(data) ? data : [];
       } catch (error: any) {
-        console.error("Error fetching additions:", error);
-        this.error = error.data?.message;
+        this.error = error.data?.message || "Error al cargar adiciones";
       } finally {
         this.loading = false;
       }
@@ -49,7 +48,7 @@ export const useAdditionsStore = defineStore("additions", {
         this.additions.unshift(newAddition);
         return newAddition;
       } catch (error: any) {
-        this.error = error.message;
+        this.error = error.message || "Error al crear adición";
         throw error;
       } finally {
         this.loading = false;

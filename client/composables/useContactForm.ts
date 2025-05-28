@@ -119,7 +119,6 @@ export function useContactForm() {
           message: "",
         };
       } catch (error) {
-        console.error("Error al enviar formulario:", error);
         apiError.value =
           error instanceof Error
             ? error.message

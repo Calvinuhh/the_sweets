@@ -1,6 +1,6 @@
 export const validateName = (name: string) => {
   if (!/^[a-zA-Z0-9ñÑáéíóúÁÉÍÓÚ\s]+$/.test(name))
-    throw Error("El 'name' solo puede contener letras, números y espacios");
+    throw Error("El 'nombre' solo puede contener letras, números y espacios");
 };
 
 export const validatePrice = (price: number) => {

@@ -2,6 +2,19 @@
     <div class="login-form">
         <h2 class="text-2xl font-bold mb-6">Iniciar Sesión</h2>
 
+        <div class="mb-6">
+            <GoogleSignInButton />
+        </div>
+
+        <div class="relative mb-6">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-300"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-white text-gray-500">O inicia sesión con email</span>
+            </div>
+        </div>
+
         <form @submit.prevent="onSubmit" class="space-y-4">
             <div>
                 <label for="email" class="block text-sm font-medium mb-1">Correo electrónico</label>
@@ -60,6 +73,7 @@
 import { ref } from 'vue';
 import { useLoginForm } from '~/composables/useLoginForm';
 import { useRouter } from 'vue-router';
+import GoogleSignInButton from './GoogleSignInButton.vue'
 
 const router = useRouter();
 const showPassword = ref(false);

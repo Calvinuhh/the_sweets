@@ -34,13 +34,21 @@ export const validateUserRegistration = (
 
     if (!name) throw Error("El campo 'name' es requerido");
     if (!lastname) throw Error("El campo 'lastname' es requerido");
-    if (!country_code) throw Error("El campo 'country_code' es requerido");
     if (!email) throw Error("El campo 'email' es requerido");
     if (!password) throw Error("El campo 'password' es requerido");
+    if (!country_code) throw Error("El campo 'country_code' es requerido");
     if (!phone) throw Error("El campo 'phone' es requerido");
 
     validateName(name);
     validateName(lastname);
+    validatePassword(password);
+    validateEmail(email);
+    validateUserPhone(phone);
+    validateMaxLength(name, 100, "name");
+    validateMaxLength(lastname, 100, "lastname");
+    validateMaxLength(country_code, 5, "country_code");
+    validateMaxLength(phone, 15, "phone");
+
     if (country_code.length < 2) {
       throw Error("El campo 'country_code' debe tener al menos 2 caracteres");
     }
@@ -55,9 +63,6 @@ export const validateUserRegistration = (
     if (phone.length > 15) {
       throw Error("El campo 'phone' no puede tener más de 15 caracteres");
     }
-    validatePassword(password);
-    validateEmail(email);
-    validateUserPhone(phone); // Usar la validación específica para usuarios
 
     next();
   } catch (error) {
@@ -149,18 +154,16 @@ export const patchUserData = (
     const { name, lastname, country_code, phone } = req.body;
 
     if (name) {
-      if (!name) throw Error("El campo 'name' es requerido");
       validateName(name);
       validateMaxLength(name, 100, "name");
     }
 
     if (lastname) {
-      if (!lastname) throw Error("El campo 'lastname' es requerido");
       validateName(lastname);
       validateMaxLength(lastname, 100, "lastname");
     }
+
     if (country_code) {
-      if (!country_code) throw Error("El campo 'country_code' es requerido");
       if (country_code.length < 2)
         throw Error("El campo 'country_code' debe tener al menos 2 caracteres");
       if (country_code.length > 5)
@@ -168,8 +171,8 @@ export const patchUserData = (
           "El campo 'country_code' no puede tener más de 5 caracteres"
         );
     }
+
     if (phone) {
-      if (!phone) throw Error("El campo 'phone' es requerido");
       if (phone.length < 10)
         throw Error("El campo 'phone' debe tener al menos 10 caracteres");
       if (phone.length > 15)
@@ -222,6 +225,25 @@ export const validateContactForm = (
   } catch (error) {
     const err = error as Error;
 
+    res.status(400).json({
+      message: err.message,
+    });
+  }
+};
+
+export const validateGoogleLogin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) throw Error("El campo 'token' es requerido");
+
+    next();
+  } catch (error) {
+    const err = error as Error;
     res.status(400).json({
       message: err.message,
     });

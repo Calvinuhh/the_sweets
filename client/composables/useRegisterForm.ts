@@ -147,7 +147,6 @@ export function useRegisterForm() {
         showSuccessModal.value = true;
         resetForm();
       } catch (error) {
-        console.error("Error al registrar:", error);
         if (error instanceof Error) {
           apiError.value = error.message;
         } else {
