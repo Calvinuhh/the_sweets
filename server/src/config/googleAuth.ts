@@ -1,6 +1,5 @@
 import { OAuth2Client } from "google-auth-library";
 
-process.loadEnvFile();
 const { GOOGLE_CLIENT_ID } = process.env as {
   GOOGLE_CLIENT_ID: string;
 };
