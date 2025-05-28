@@ -4,8 +4,7 @@
             <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500"></div>
         </div>
 
-        <div v-show="scriptLoaded" id="google-signin-button" class="w-full">
-        </div>
+        <div v-show="scriptLoaded" id="google-signin-button" class="w-full"></div>
 
         <div v-if="isLoading" class="flex justify-center mt-4">
             <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-pink-500"></div>
@@ -26,6 +25,12 @@ onMounted(async () => {
         await nextTick()
         renderGoogleButton('google-signin-button')
         scriptLoaded.value = true
+        setTimeout(() => {
+            const btn = document.querySelector('#google-signin-button > div');
+            if (btn) {
+                (btn as HTMLElement).style.width = '100%';
+            }
+        }, 300);
     }
 })
 
