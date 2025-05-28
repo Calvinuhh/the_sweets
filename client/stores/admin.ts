@@ -29,8 +29,10 @@ export const useAdminStore = defineStore("admin", {
         const expirationTime = new Date().getTime() + 3600000;
         this.tokenExpiration = expirationTime;
 
-        localStorage.setItem("token", res.token);
-        localStorage.setItem("tokenExpiration", expirationTime.toString());
+        if (import.meta.client) {
+          localStorage.setItem("token", res.token);
+          localStorage.setItem("tokenExpiration", expirationTime.toString());
+        }
 
         Swal.fire({
           icon: "success",
@@ -44,7 +46,7 @@ export const useAdminStore = defineStore("admin", {
         Swal.fire({
           icon: "error",
           title: "Error",
-          text: error.data.message,
+          text: error.data.message || "Error al iniciar sesión",
           confirmButtonText: "Aceptar",
         });
       }
@@ -56,8 +58,12 @@ export const useAdminStore = defineStore("admin", {
       this.token = null;
       this.message = null;
       this.tokenExpiration = null;
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenExpiration");
+
+      if (import.meta.client) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiration");
+      }
+
       navigateTo("/admin/login");
     },
 

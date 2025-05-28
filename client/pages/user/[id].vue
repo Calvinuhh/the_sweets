@@ -3,6 +3,13 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Perfil de Usuario</h1>
 
+            <div v-if="isGoogleUser" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <div class="flex items-center">
+                    <Icon name="mdi:google" class="h-5 w-5 text-blue-600 mr-2" />
+                    <span class="text-sm text-blue-800">Cuenta vinculada con Google</span>
+                </div>
+            </div>
+
             <form @submit.prevent="handleSubmit" class="space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
@@ -35,15 +42,17 @@
                 <div>
                     <label for="country_code" class="block text-sm font-medium text-gray-700 mb-2">
                         Código de País
+                        <span v-if="!isGoogleUser" class="text-red-500">*</span>
                     </label>
                     <input id="country_code" v-model="formData.country_code" type="text" :disabled="!isEditing"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        placeholder="Ej: +1, +52, +34" />
+                        placeholder="Ej: 1, 52, 34" />
                 </div>
 
                 <div>
                     <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
                         Teléfono
+                        <span v-if="!isGoogleUser" class="text-red-500">*</span>
                     </label>
                     <input id="phone" v-model="formData.phone" type="tel" :disabled="!isEditing"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
@@ -98,6 +107,11 @@ const formData = reactive({
     phone: ''
 })
 
+const isGoogleUser = computed(() => {
+    const userData = usersStore.getUserData
+    return userData && !userData.country_code && !userData.phone
+})
+
 onMounted(() => {
     loadUserData()
 })
@@ -144,9 +158,16 @@ async function handleSubmit() {
         return
     }
 
-    if (!formData.phone.trim()) {
-        showError('El teléfono es obligatorio')
-        return
+    if (!isGoogleUser.value) {
+        if (!formData.phone.trim()) {
+            showError('El teléfono es obligatorio')
+            return
+        }
+
+        if (!formData.country_code.trim()) {
+            showError('El código de país es obligatorio')
+            return
+        }
     }
 
     const changedFields = getChangedFields(originalData.value, formData)

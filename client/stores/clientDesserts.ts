@@ -22,7 +22,7 @@ export const useClientDessertsStore = defineStore("clientDesserts", () => {
         desserts.value = result as Dessert[];
       }
     } catch (err: any) {
-      error.value = err.message;
+      error.value = err.message || "Error al cargar postres";
       desserts.value = [];
     } finally {
       loading.value = false;

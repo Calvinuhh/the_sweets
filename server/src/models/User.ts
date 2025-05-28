@@ -27,12 +27,21 @@ const userSchema = new Schema<User>(
     },
     password: {
       type: String,
-      required: true,
+      required: function (this: User) {
+        return !this.googleId;
+      },
       trim: true,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     country_code: {
       type: String,
-      required: true,
+      required: function (this: User) {
+        return !this.googleId;
+      },
       trim: true,
     },
     phone: {
